@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 매직 메서드 최종 수정본</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#fff7ed,#fef3c7);color:#1e293b;line-height:1.75}
+header{background:linear-gradient(135deg,#ea580c,#f59e0b);color:white;text-align:center;padding:44px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(0,0,0,.12)}
+h2{color:#ea580c;border-bottom:3px solid #fed7aa;padding-bottom:10px}
+h3{color:#c2410c}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;white-space:pre-wrap;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#fff7ed;border-left:7px solid #fb923c;padding:15px;border-radius:14px;margin:12px 0}
+.qbox{background:#fbfdff;border:1px solid #fed7aa;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#ea580c;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#ea580c;margin-top:15px}
+.badge{display:inline-block;background:#ffedd5;color:#c2410c;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>✨ OOP 심화: 매직 메서드와 연산자 오버로딩</h1>
+<p>__add__ · __sub__ · __lt__ · __str__ · __len__ 실생활 예제 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="예: 10101"></div>
+<div>이름 <input id="sname" type="text" placeholder="예: 홍길동"></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP_매직메서드_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">매직 메서드</span>는 파이썬에서 특별한 동작을 객체에 연결해 주는 메서드입니다.</p>
+<div class="explain">
+예를 들어 객체끼리 <b>+</b> 연산을 했을 때 <b>__add__</b>가 실행되고,
+객체끼리 <b>&lt;</b> 비교를 했을 때 <b>__lt__</b>가 실행됩니다.
+이처럼 연산자의 의미를 클래스에 맞게 새롭게 정의하는 것을 <b>연산자 오버로딩</b>이라고 합니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+function escapeHtml(s){
+  return s
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;");
+}
+
+function norm(s){
+  return s
+    .replaceAll(" ","")
+    .replaceAll("\\n","")
+    .replaceAll("\n","")
+    .replaceAll(".","")
+    .replaceAll(":","")
+    .replaceAll("!","")
+    .trim();
+}
+
+const examples=[
+{
+title:"🛒 쇼핑카트 가격 합산",
+concept:"Cart 객체끼리 + 연산을 하면 두 상품 가격의 합계가 계산되도록 __add__를 정의합니다.",
+code:`class Cart:
+    def __init__(self, price):
+        self.price = price
+
+    def __add__(self, other):
+        return self.price + other.price
+
+a = Cart(3000)
+b = Cart(5000)
+
+print("상품 A:", a.price)
+print("상품 B:", b.price)
+print("총합:", a + b)`,
+output:"상품 A: 3000\n상품 B: 5000\n총합: 8000",
+key:"상품 A 3000 상품 B 5000 총합 8000",
+oxType:"연산자 연결형 OX",
+ox:"a + b를 실행하면 Cart 클래스의 __add__ 메서드가 호출된다.",
+oxAns:"O",
+oxExp:"객체끼리 + 연산을 하면 내부적으로 __add__가 호출됩니다.",
+mc:"a + b의 결과로 알맞은 것은?",
+choices:["① 3000","② 5000","③ 8000","④ Cart","⑤ 오류"],
+mcAns:"3",
+mcExp:"a.price는 3000, b.price는 5000이므로 합계는 8000입니다."
+},
+{
+title:"🏦 계좌 잔액 차감",
+concept:"Account 객체끼리 - 연산을 하면 두 잔액의 차이를 계산하도록 __sub__를 정의합니다.",
+code:`class Account:
+    def __init__(self, money):
+        self.money = money
+
+    def __sub__(self, other):
+        return self.money - other.money
+
+main = Account(10000)
+used = Account(3000)
+
+print("처음 금액:", main.money)
+print("사용 금액:", used.money)
+print("남은 금액:", main - used)`,
+output:"처음 금액: 10000\n사용 금액: 3000\n남은 금액: 7000",
+key:"처음 금액 10000 사용 금액 3000 남은 금액 7000",
+oxType:"차감 판단형 OX",
+ox:"main - used를 실행하면 __sub__가 호출되어 10000 - 3000을 계산한다.",
+oxAns:"O",
+oxExp:"- 연산은 클래스 안에 정의된 __sub__ 메서드와 연결됩니다.",
+mc:"남은 금액으로 출력되는 값은?",
+choices:["① 13000","② 10000","③ 7000","④ 3000","⑤ 0"],
+mcAns:"3",
+mcExp:"10000에서 3000을 빼면 7000입니다."
+},
+{
+title:"🏃 운동 기록 비교",
+concept:"Run 객체끼리 < 비교를 하면 시간이 더 짧은 기록인지 판단하도록 __lt__를 정의합니다.",
+code:`class Run:
+    def __init__(self, name, time):
+        self.name = name
+        self.time = time
+
+    def __lt__(self, other):
+        return self.time < other.time
+
+a = Run("A학생", 12)
+b = Run("B학생", 15)
+
+print("A 기록:", a.time)
+print("B 기록:", b.time)
+print("A가 더 빠른가?", a < b)`,
+output:"A 기록: 12\nB 기록: 15\nA가 더 빠른가? True",
+key:"A 기록 12 B 기록 15 A가 더 빠른가 True",
+oxType:"비교 연산형 OX",
+ox:"a < b를 실행하면 a.time < b.time을 비교하도록 __lt__가 동작한다.",
+oxAns:"O",
+oxExp:"__lt__는 less than, 즉 < 비교 연산을 정의하는 매직 메서드입니다.",
+mc:"a < b의 결과가 True인 이유는?",
+choices:["① 12가 15보다 작기 때문","② 12가 15보다 크기 때문","③ 이름이 A라서","④ __add__가 실행되어서","⑤ b가 먼저 생성되어서"],
+mcAns:"1",
+mcExp:"a.time은 12, b.time은 15이므로 12 < 15는 True입니다."
+},
+{
+title:"📚 책 정보 출력",
+concept:"Book 객체를 print()로 출력할 때 보기 좋은 문자열이 나오도록 __str__을 정의합니다.",
+code:`class Book:
+    def __init__(self, title, author):
+        self.title = title
+        self.author = author
+
+    def __str__(self):
+        return "책 제목: " + self.title + " / 저자: " + self.author
+
+book = Book("파이썬", "홍길동")
+
+print(book)
+print("도서 정보 출력 완료")`,
+output:"책 제목: 파이썬 / 저자: 홍길동\n도서 정보 출력 완료",
+key:"책 제목 파이썬 / 저자 홍길동 도서 정보 출력 완료",
+oxType:"문자열 표현형 OX",
+ox:"print(book)을 실행할 때 __str__이 호출되어 객체 설명 문자열이 출력된다.",
+oxAns:"O",
+oxExp:"__str__은 객체를 문자열로 표현할 때 사용되는 매직 메서드입니다.",
+mc:"__str__의 역할로 가장 적절한 것은?",
+choices:["① 객체의 덧셈 정의","② 객체의 문자열 표현 정의","③ 객체의 길이 계산","④ 객체 삭제","⑤ 객체 비교"],
+mcAns:"2",
+mcExp:"__str__은 print(객체)와 같은 상황에서 출력될 문자열을 정의합니다."
+},
+{
+title:"🎵 플레이리스트 길이",
+concept:"Playlist 객체에 len()을 적용하면 곡 개수가 반환되도록 __len__을 정의합니다.",
+code:`class Playlist:
+    def __init__(self, songs):
+        self.songs = songs
+
+    def __len__(self):
+        return len(self.songs)
+
+playlist = Playlist(["노래1", "노래2", "노래3"])
+
+print("곡 목록:", playlist.songs)
+print("곡 개수:", len(playlist))
+print("재생 준비 완료")`,
+output:"곡 목록: ['노래1', '노래2', '노래3']\n곡 개수: 3\n재생 준비 완료",
+key:"곡 목록 ['노래1','노래2','노래3'] 곡 개수 3 재생 준비 완료",
+oxType:"길이 계산형 OX",
+ox:"len(playlist)를 실행하면 Playlist 클래스의 __len__ 메서드가 호출된다.",
+oxAns:"O",
+oxExp:"사용자 정의 객체에 len()을 적용하려면 __len__ 메서드를 정의해야 합니다.",
+mc:"len(playlist)의 결과는?",
+choices:["① 0","② 1","③ 2","④ 3","⑤ 오류"],
+mcAns:"4",
+mcExp:"songs 리스트에 곡이 3개 있으므로 len(playlist)는 3입니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+  const box=document.createElement("div");
+  box.className="qbox";
+  box.innerHTML=`
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${escapeHtml(e.output)}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 파이썬의 특별한 메서드인 매직 메서드를 이용해 객체의 연산 방식을 직접 정의합니다.
+객체에 일반 연산자나 내장 함수를 사용할 때 내부적으로 어떤 매직 메서드가 실행되는지 이해하는 것이 핵심입니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${escapeHtml(e.output).replaceAll("\n","<br>")}</p>
+<p class="explain">상세 풀이: 코드의 print문이 순서대로 실행되며, 연산자 또는 내장 함수 호출 시 연결된 매직 메서드가 동작합니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+`;
+  area.appendChild(box);
+});
+
+function grade(){
+  let score=0,total=15;
+  let detail=[], explain=[];
+
+  examples.forEach((e,i)=>{
+    let short=document.getElementById("short"+i).value.trim();
+    let shortOk=norm(short).includes(norm(e.key));
+    if(shortOk)score++;
+
+    detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short || "미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 출력 풀이: ${e.output.replaceAll("\n"," / ")}가 출력됩니다.`);
+
+    let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+    let oxVal=ox ? ox.value : "미응답";
+    let oxOk=oxVal===e.oxAns;
+    if(oxOk)score++;
+
+    detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+    let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+    let mcVal=mc ? mc.value : "미응답";
+    let mcOk=mcVal===e.mcAns;
+    if(mcOk)score++;
+
+    detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+  });
+
+  let percent=Math.round(score/total*100);
+  document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+  let sid=document.getElementById("sid").value.trim() || "학번";
+  let name=document.getElementById("sname").value.trim() || "이름";
+
+  let txt=`OOP 심화 매직 메서드 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+__add__ : + 연산 정의
+__sub__ : - 연산 정의
+__lt__ : < 비교 정의
+__str__ : print(객체) 문자열 표현 정의
+__len__ : len(객체) 길이 정의
+`;
+
+  let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`${sid}_${name}_OOP_매직메서드_${percent}점.txt`;
+  a.click();
+}
+</script>
+
+</body>
+</html>

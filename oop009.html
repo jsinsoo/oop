@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 컴포지션 평가</title>
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:'Malgun Gothic',Arial,sans-serif;
+background:linear-gradient(135deg,#f0fdf4,#ecfeff);
+color:#172033;
+line-height:1.75;
+}
+header{
+background:linear-gradient(135deg,#16a34a,#0891b2);
+color:white;
+text-align:center;
+padding:46px 24px;
+}
+header h1{
+margin:0;
+font-size:34px;
+}
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:24px;
+}
+.card{
+background:white;
+border-radius:26px;
+padding:28px;
+margin:24px 0;
+box-shadow:0 12px 32px rgba(30,64,175,.16);
+}
+h2{
+color:#16a34a;
+border-bottom:3px solid #bbf7d0;
+padding-bottom:10px;
+}
+h3{
+color:#15803d;
+}
+pre{
+background:#0f172a;
+color:#f8fafc;
+padding:18px;
+border-radius:16px;
+overflow:auto;
+font-size:15px;
+}
+.output{
+background:#ecfdf5;
+border-left:7px solid #10b981;
+padding:15px;
+border-radius:14px;
+font-weight:900;
+white-space:pre-line;
+}
+.explain{
+background:#f0fdf4;
+border-left:7px solid #22c55e;
+padding:15px;
+border-radius:14px;
+}
+.qbox{
+background:#fbfdff;
+border:1px solid #bbf7d0;
+border-radius:20px;
+padding:20px;
+margin:20px 0;
+}
+.choice{
+display:flex;
+align-items:flex-start;
+gap:10px;
+background:#f8fafc;
+border:1px solid #dbe4f0;
+border-radius:13px;
+padding:10px;
+margin:8px 0;
+cursor:pointer;
+}
+.choice input{
+margin-top:6px;
+flex:0 0 auto;
+}
+textarea,input[type=text]{
+width:100%;
+padding:12px;
+border:1px solid #b9c8df;
+border-radius:12px;
+font-size:16px;
+}
+textarea{
+height:90px;
+}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:12px;
+}
+button{
+background:#16a34a;
+color:white;
+border:0;
+border-radius:14px;
+padding:14px 22px;
+font-size:17px;
+font-weight:900;
+cursor:pointer;
+}
+.answer{
+color:#087f5b;
+font-weight:900;
+}
+.result{
+font-size:24px;
+font-weight:900;
+color:#16a34a;
+margin-top:15px;
+}
+.badge{
+display:inline-block;
+background:#dcfce7;
+color:#166534;
+border-radius:999px;
+padding:5px 12px;
+font-weight:900;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧩 OOP 응용: 컴포지션 (Composition)</h1>
+<p>객체 내부에 다른 객체를 포함하는 has-a 관계 학습</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text"></div>
+<div>이름 <input id="sname" type="text"></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP컴포지션_점수.txt</b> 저장</p>
+</section>
+
+<section class="card">
+<h2>핵심 개념</h2>
+
+<p>
+<span class="badge">Composition</span>은  
+한 객체가 다른 객체를 내부 구성 요소로 가지는 구조입니다.
+</p>
+
+<div class="explain">
+예:
+자동차는 엔진을 가진다  
+컴퓨터는 CPU를 가진다  
+학교는 교실을 가진다  
+
+→ "is-a" 상속 관계가 아니라  
+→ "has-a" 포함 관계입니다.
+</div>
+</section>
+
+<section class="card">
+<h2>실생활 예제 5개</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+
+{
+title:"🚗 자동차와 엔진",
+concept:"자동차는 엔진 객체를 내부에 포함한다.",
+code:`class Engine:
+    def start(self):
+        print("엔진 시동")
+        
+class Car:
+    def __init__(self):
+        self.engine=Engine()
+        
+    def drive(self):
+        self.engine.start()
+        print("자동차 출발")
+
+c=Car()
+c.drive()`,
+output:"엔진 시동\n자동차 출발",
+key:"엔진 시동 자동차 출발",
+ox:"Car는 Engine 객체를 내부에 가진다.",
+oxAns:"O",
+oxExp:"self.engine=Engine()이므로 has-a 관계입니다.",
+mc:"컴포지션 관계는?",
+choices:["Car is Engine","Car has Engine","Car == Engine","Car delete Engine","Car abstract Engine"],
+mcAns:"2",
+mcExp:"Car has Engine 관계입니다."
+},
+
+{
+title:"💻 컴퓨터와 CPU",
+concept:"컴퓨터 객체가 CPU 객체를 포함한다.",
+code:`class CPU:
+    def process(self):
+        print("CPU 연산 시작")
+        
+class Computer:
+    def __init__(self):
+        self.cpu=CPU()
+        
+    def run(self):
+        self.cpu.process()
+        print("컴퓨터 실행 완료")
+
+c=Computer()
+c.run()`,
+output:"CPU 연산 시작\n컴퓨터 실행 완료",
+key:"CPU 연산 시작 컴퓨터 실행 완료",
+ox:"CPU 객체 없이 Computer.run() 구조를 설계했다.",
+oxAns:"X",
+oxExp:"Computer 내부에서 CPU 객체를 사용합니다.",
+mc:"self.cpu는 무엇?",
+choices:["지역변수","내부 객체","반복문","함수","예외"],
+mcAns:"2",
+mcExp:"내부 포함 객체입니다."
+},
+
+{
+title:"🏫 학교와 교실",
+concept:"학교는 여러 교실 중 하나를 포함한다.",
+code:`class Classroom:
+    def open(self):
+        print("교실 문 열림")
+
+class School:
+    def __init__(self):
+        self.room=Classroom()
+
+    def start(self):
+        self.room.open()
+        print("수업 시작")
+
+s=School()
+s.start()`,
+output:"교실 문 열림\n수업 시작",
+key:"교실 문 열림 수업 시작",
+ox:"School은 Classroom 객체를 가진다.",
+oxAns:"O",
+oxExp:"School 내부에서 Classroom 생성",
+mc:"컴포지션 핵심은?",
+choices:["상속","포함","삭제","반복","정렬"],
+mcAns:"2",
+mcExp:"포함 관계입니다."
+},
+
+{
+title:"📱 스마트폰과 카메라",
+concept:"스마트폰은 카메라 기능 객체를 포함한다.",
+code:`class Camera:
+    def shoot(self):
+        print("사진 촬영")
+
+class Phone:
+    def __init__(self):
+        self.camera=Camera()
+
+    def use(self):
+        self.camera.shoot()
+        print("사진 저장 완료")
+
+p=Phone()
+p.use()`,
+output:"사진 촬영\n사진 저장 완료",
+key:"사진 촬영 사진 저장 완료",
+ox:"Phone은 Camera를 상속받는다.",
+oxAns:"X",
+oxExp:"상속이 아니라 포함 관계입니다.",
+mc:"올바른 설명은?",
+choices:["Phone is Camera","Phone has Camera","Phone delete Camera","Phone loop Camera","Phone inherit 반드시 필요"],
+mcAns:"2",
+mcExp:"has-a 관계입니다."
+},
+
+{
+title:"🍔 음식 주문과 결제",
+concept:"주문 객체가 결제 객체를 포함한다.",
+code:`class Payment:
+    def pay(self):
+        print("결제 진행")
+
+class Order:
+    def __init__(self):
+        self.payment=Payment()
+
+    def complete(self):
+        self.payment.pay()
+        print("주문 완료")
+
+o=Order()
+o.complete()`,
+output:"결제 진행\n주문 완료",
+key:"결제 진행 주문 완료",
+ox:"Order 내부에 Payment 객체가 존재한다.",
+oxAns:"O",
+oxExp:"self.payment 생성",
+mc:"Order와 Payment 관계는?",
+choices:["상속","컴포지션","삭제","추상클래스","정적메서드"],
+mcAns:"2",
+mcExp:"컴포지션 관계입니다."
+}
+
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+area.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+
+<p class="explain">${e.concept}</p>
+
+<h4>코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<div class="explain">
+객체 내부에서 다른 객체를 생성하여 사용하는 구조입니다.
+</div>
+
+<h4>출력 서술형</h4>
+<textarea id="short${i}"></textarea>
+
+<div class="answer">
+정답 예시:<br>${e.output.replaceAll("\\n","<br>")}
+</div>
+
+<h4>OX 문제</h4>
+<p>${e.ox}</p>
+
+<label class="choice">
+<input type="radio" name="ox${i}" value="O">
+<span>O</span>
+</label>
+
+<label class="choice">
+<input type="radio" name="ox${i}" value="X">
+<span>X</span>
+</label>
+
+<div class="answer">정답: ${e.oxAns}</div>
+<div class="explain">${e.oxExp}</div>
+
+<h4>5지선다형</h4>
+<p>${e.mc}</p>
+
+${e.choices.map((c,j)=>`
+<label class="choice">
+<input type="radio" name="mc${i}" value="${j+1}">
+<span>${c}</span>
+</label>
+`).join("")}
+
+<div class="answer">정답: ${e.mcAns}</div>
+<div class="explain">${e.mcExp}</div>
+
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","")
+.replaceAll("\\n","")
+.replaceAll("\n","")
+.trim();
+}
+
+function grade(){
+
+let score=0;
+let total=15;
+let detail=[];
+let explain=[];
+
+examples.forEach((e,i)=>{
+
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.key));
+
+if(shortOk) score++;
+
+detail.push(`예제${i+1} 서술형: ${short||"미응답"} | ${shortOk?"정답":"오답"}`);
+explain.push(`출력 정답: ${e.output}`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+
+if(oxVal===e.oxAns) score++;
+
+detail.push(`예제${i+1} OX: ${oxVal}`);
+explain.push(`OX 해설: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+
+if(mcVal===e.mcAns) score++;
+
+detail.push(`예제${i+1} 객관식: ${mcVal}`);
+explain.push(`객관식 해설: ${e.mcExp}`);
+
+});
+
+let percent=Math.round(score/total*100);
+
+document.getElementById("result").innerHTML=
+`점수: ${percent}점 (${score}/${total})`;
+
+let sid=document.getElementById("sid").value||"학번";
+let name=document.getElementById("sname").value||"이름";
+
+let txt=
+`OOP 컴포지션 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}
+
+[문항 결과]
+${detail.join("\n")}
+
+[상세 풀이]
+${explain.join("\n")}
+
+핵심 개념:
+Composition = has-a 관계
+객체 내부 객체 포함 구조
+`;
+
+let blob=new Blob([txt],{
+type:"text/plain;charset=utf-8"
+});
+
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=
+`${sid}_${name}_OOP컴포지션_${percent}점.txt`;
+
+a.click();
+
+}
+</script>
+
+</body>
+</html>

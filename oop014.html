@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 메타클래스 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#fdf2f8,#eef2ff);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#be185d,#4f46e5);color:white;text-align:center;padding:46px 24px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(30,64,175,.16)}
+h2{color:#be185d;border-bottom:3px solid #fbcfe8;padding-bottom:10px}
+h3{color:#9d174d}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;white-space:pre-wrap;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#fdf2f8;border-left:7px solid #f472b6;padding:15px;border-radius:14px;margin:12px 0}
+.qbox{background:#fbfdff;border:1px solid #fbcfe8;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#be185d;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#be185d;margin-top:15px}
+.badge{display:inline-block;background:#fce7f3;color:#9d174d;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧬 OOP 심화: 메타클래스 Metaclass</h1>
+<p>클래스를 만드는 클래스 · 클래스 생성 제어 · 자동 등록 · 규칙 검사 실생활 예제 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="예: 10101"></div>
+<div>이름 <input id="sname" type="text" placeholder="예: 홍길동"></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP_메타클래스_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">메타클래스</span>는 클래스를 만드는 클래스입니다.</p>
+<div class="explain">
+일반 객체는 클래스로부터 만들어지고, 클래스 자체도 사실은 메타클래스로부터 만들어집니다.
+파이썬에서 기본 메타클래스는 <b>type</b>입니다.
+메타클래스를 사용하면 클래스가 생성되는 순간에 이름을 검사하거나, 클래스 속성을 자동 추가하거나, 생성된 클래스를 목록에 등록하는 등의 고급 제어를 할 수 있습니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+function escapeHtml(s){
+  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+function norm(s){
+  return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").replaceAll("!","").trim();
+}
+
+const examples=[
+{
+title:"🏪 매장 클래스 자동 등록",
+concept:"새로운 매장 클래스가 만들어질 때마다 메타클래스가 자동으로 registry 목록에 등록합니다.",
+code:`class StoreMeta(type):
+    registry = []
+
+    def __new__(mcls, name, bases, namespace):
+        cls = super().__new__(mcls, name, bases, namespace)
+        if name != "BaseStore":
+            StoreMeta.registry.append(name)
+            print("매장 등록:", name)
+        return cls
+
+class BaseStore(metaclass=StoreMeta):
+    pass
+
+class Cafe(BaseStore):
+    pass
+
+class Bakery(BaseStore):
+    pass
+
+print("등록 매장 수:", len(StoreMeta.registry))
+print("등록 목록:", StoreMeta.registry)`,
+output:"매장 등록: Cafe\n매장 등록: Bakery\n등록 매장 수: 2\n등록 목록: ['Cafe', 'Bakery']",
+key:"매장 등록 Cafe 매장 등록 Bakery 등록 매장 수 2 등록 목록 ['Cafe','Bakery']",
+oxType:"자동 등록형 OX",
+ox:"Cafe와 Bakery 클래스는 생성되는 순간 StoreMeta.registry에 자동 등록된다.",
+oxAns:"O",
+oxExp:"메타클래스의 __new__는 클래스가 만들어질 때 실행되므로, 새 클래스 이름을 목록에 추가할 수 있습니다.",
+mc:"이 코드에서 클래스를 자동 등록하는 핵심 메서드는?",
+choices:["① __new__","② __len__","③ __add__","④ append만 단독 실행","⑤ print"],
+mcAns:"1",
+mcExp:"메타클래스의 __new__가 클래스 생성 과정을 가로채 자동 등록을 수행합니다."
+},
+{
+title:"📚 수업 클래스 이름 규칙 검사",
+concept:"수업 클래스 이름이 반드시 Lesson으로 끝나도록 메타클래스가 클래스 생성 시점에 검사합니다.",
+code:`class LessonMeta(type):
+    def __new__(mcls, name, bases, namespace):
+        if name != "BaseLesson" and not name.endswith("Lesson"):
+            print("이름 규칙 위반:", name)
+        cls = super().__new__(mcls, name, bases, namespace)
+        print("클래스 생성:", name)
+        return cls
+
+class BaseLesson(metaclass=LessonMeta):
+    pass
+
+class MathLesson(BaseLesson):
+    pass
+
+class Science(BaseLesson):
+    pass
+
+print("검사 완료")
+print("기준 접미사: Lesson")`,
+output:"클래스 생성: BaseLesson\n클래스 생성: MathLesson\n이름 규칙 위반: Science\n클래스 생성: Science\n검사 완료\n기준 접미사: Lesson",
+key:"클래스 생성 BaseLesson 클래스 생성 MathLesson 이름 규칙 위반 Science 클래스 생성 Science 검사 완료 기준 접미사 Lesson",
+oxType:"규칙 검사형 OX",
+ox:"Science는 Lesson으로 끝나지 않으므로 이름 규칙 위반 메시지가 출력된다.",
+oxAns:"O",
+oxExp:"name.endswith('Lesson') 조건이 False이므로 위반 메시지가 출력됩니다.",
+mc:"클래스 이름이 특정 규칙을 따르는지 검사하기 좋은 시점은?",
+choices:["① 클래스 생성 시점","② 프로그램 종료 후","③ 리스트 정렬 후","④ print가 끝난 뒤","⑤ 객체 삭제 시점만"],
+mcAns:"1",
+mcExp:"메타클래스는 클래스 생성 시점에 개입할 수 있으므로 이름 규칙 검사에 적합합니다."
+},
+{
+title:"🧾 주문 모델 기본 속성 자동 추가",
+concept:"메타클래스가 주문 관련 클래스에 created_by 속성을 자동으로 추가합니다.",
+code:`class ModelMeta(type):
+    def __new__(mcls, name, bases, namespace):
+        namespace["created_by"] = "ModelMeta"
+        cls = super().__new__(mcls, name, bases, namespace)
+        print("모델 생성:", name)
+        return cls
+
+class Order(metaclass=ModelMeta):
+    category = "food"
+
+print("카테고리:", Order.category)
+print("생성자:", Order.created_by)
+print("메타클래스:", type(Order).__name__)`,
+output:"모델 생성: Order\n카테고리: food\n생성자: ModelMeta\n메타클래스: ModelMeta",
+key:"모델 생성 Order 카테고리 food 생성자 ModelMeta 메타클래스 ModelMeta",
+oxType:"속성 주입형 OX",
+ox:"Order 클래스에는 코드에서 직접 created_by를 쓰지 않았지만, 메타클래스가 자동으로 추가했다.",
+oxAns:"O",
+oxExp:"namespace['created_by'] = 'ModelMeta'가 클래스 생성 전에 속성을 삽입합니다.",
+mc:"namespace의 역할로 가장 적절한 것은?",
+choices:["① 클래스에 들어갈 속성과 메서드 정보를 담은 공간","② 객체 삭제 명령","③ 반복문 결과","④ 숫자 계산 전용 함수","⑤ 파일 이름"],
+mcAns:"1",
+mcExp:"메타클래스 __new__에서 namespace는 클래스 본문에 정의된 이름들을 담은 딕셔너리입니다."
+},
+{
+title:"🚗 차량 클래스에 공통 메서드 자동 부여",
+concept:"메타클래스가 모든 차량 클래스에 info() 메서드를 자동으로 붙여 줍니다.",
+code:`class VehicleMeta(type):
+    def __new__(mcls, name, bases, namespace):
+        def info(self):
+            return "차량 종류: " + self.kind
+        namespace["info"] = info
+        cls = super().__new__(mcls, name, bases, namespace)
+        print("차량 클래스 생성:", name)
+        return cls
+
+class Bus(metaclass=VehicleMeta):
+    def __init__(self):
+        self.kind = "버스"
+
+bus = Bus()
+print(bus.info())
+print("객체 타입:", type(bus).__name__)`,
+output:"차량 클래스 생성: Bus\n차량 종류: 버스\n객체 타입: Bus",
+key:"차량 클래스 생성 Bus 차량 종류 버스 객체 타입 Bus",
+oxType:"메서드 자동 추가형 OX",
+ox:"Bus 클래스 본문에 info()가 없어도 메타클래스가 info() 메서드를 추가했기 때문에 bus.info()를 호출할 수 있다.",
+oxAns:"O",
+oxExp:"namespace['info'] = info로 클래스 생성 전에 메서드가 추가됩니다.",
+mc:"bus.info()가 가능한 이유는?",
+choices:["① VehicleMeta가 info 메서드를 namespace에 추가했기 때문","② Bus가 리스트이기 때문","③ kind가 삭제되었기 때문","④ type이 항상 info를 자동 제공하기 때문","⑤ print가 메서드를 생성했기 때문"],
+mcAns:"1",
+mcExp:"메타클래스가 클래스 생성 과정에서 info 메서드를 삽입했습니다."
+},
+{
+title:"🔐 서비스 클래스 필수 설정 검사",
+concept:"서비스 클래스가 version 속성을 반드시 가져야 한다는 규칙을 메타클래스가 검사합니다.",
+code:`class ServiceMeta(type):
+    def __new__(mcls, name, bases, namespace):
+        cls = super().__new__(mcls, name, bases, namespace)
+        if name != "BaseService":
+            if "version" in namespace:
+                print(name, "버전:", namespace["version"])
+            else:
+                print(name, "버전 정보 없음")
+        return cls
+
+class BaseService(metaclass=ServiceMeta):
+    pass
+
+class LoginService(BaseService):
+    version = "1.0"
+
+class PayService(BaseService):
+    pass
+
+print("서비스 검사 완료")
+print("메타클래스:", type(LoginService).__name__)`,
+output:"LoginService 버전: 1.0\nPayService 버전 정보 없음\n서비스 검사 완료\n메타클래스: ServiceMeta",
+key:"LoginService 버전 1.0 PayService 버전 정보 없음 서비스 검사 완료 메타클래스 ServiceMeta",
+oxType:"필수 속성 점검형 OX",
+ox:"PayService에는 version 속성이 없기 때문에 '버전 정보 없음'이 출력된다.",
+oxAns:"O",
+oxExp:"ServiceMeta가 클래스 생성 시 namespace 안에 version이 있는지 검사합니다.",
+mc:"이 예제에서 ServiceMeta가 검사하는 속성은?",
+choices:["① version","② __len__","③ registry","④ info","⑤ password"],
+mcAns:"1",
+mcExp:"ServiceMeta는 namespace에 version이라는 이름이 있는지 확인합니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+  const box=document.createElement("div");
+  box.className="qbox";
+  box.innerHTML=`
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${escapeHtml(e.output)}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 메타클래스가 <b>클래스 생성 과정</b>에 개입하는 구조를 보여 줍니다.
+일반 메서드가 객체 동작을 제어한다면, 메타클래스는 클래스가 만들어지는 순간의 동작을 제어합니다.
+이를 통해 자동 등록, 이름 규칙 검사, 공통 속성 추가, 공통 메서드 추가, 필수 설정 점검 등을 구현할 수 있습니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${escapeHtml(e.output).replaceAll("\n","<br>")}</p>
+<p class="explain">상세 풀이: 클래스 정의문이 실행될 때 메타클래스의 __new__가 작동하고, 이후 print문이 순서대로 실행됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+`;
+  area.appendChild(box);
+});
+
+function grade(){
+  let score=0,total=15;
+  let detail=[], explain=[];
+
+  examples.forEach((e,i)=>{
+    let short=document.getElementById("short"+i).value.trim();
+    let shortOk=norm(short).includes(norm(e.key));
+    if(shortOk)score++;
+
+    detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short || "미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 출력 풀이: ${e.output.replaceAll("\n"," / ")}가 출력됩니다. 클래스 정의 시 메타클래스가 먼저 작동하고, 이후 일반 print문이 실행되기 때문입니다.`);
+
+    let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+    let oxVal=ox ? ox.value : "미응답";
+    let oxOk=oxVal===e.oxAns;
+    if(oxOk)score++;
+
+    detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+    let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+    let mcVal=mc ? mc.value : "미응답";
+    let mcOk=mcVal===e.mcAns;
+    if(mcOk)score++;
+
+    detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+  });
+
+  let percent=Math.round(score/total*100);
+  document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+  let sid=document.getElementById("sid").value.trim() || "학번";
+  let name=document.getElementById("sname").value.trim() || "이름";
+
+  let txt=`OOP 심화 메타클래스 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+메타클래스는 클래스를 만드는 클래스이다.
+파이썬의 기본 메타클래스는 type이다.
+metaclass=사용자정의메타클래스 형태로 클래스 생성 과정을 제어할 수 있다.
+메타클래스의 __new__는 클래스가 생성되는 순간 실행되어 자동 등록, 규칙 검사, 속성 추가, 메서드 추가 등을 수행할 수 있다.
+`;
+
+  let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`${sid}_${name}_OOP_메타클래스_${percent}점.txt`;
+  a.click();
+}
+</script>
+
+</body>
+</html>

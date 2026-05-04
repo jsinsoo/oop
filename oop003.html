@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 상속 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f3f0ff,#e0f2fe);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#5b21b6,#2563eb);color:white;text-align:center;padding:44px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:24px;padding:26px;margin:24px 0;box-shadow:0 12px 30px rgba(60,50,180,.15)}
+h2{color:#5b21b6;border-bottom:3px solid #ddd6fe;padding-bottom:10px}
+h3{color:#4c1d95}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#f5f3ff;border-left:7px solid #8b5cf6;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #ddd6fe;border-radius:18px;padding:18px;margin:18px 0}
+label{display:block;background:#f8fafc;border:1px solid #d8e3f7;border-radius:12px;padding:9px;margin:7px 0;cursor:pointer}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:82px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#5b21b6;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+button:hover{background:#4c1d95}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#5b21b6;margin-top:15px}
+.badge{display:inline-block;background:#ede9fe;color:#4c1d95;border-radius:999px;padding:5px 12px;font-weight:900}
+.small{color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧬 OOP 기초: 상속</h1>
+<p>출력이 있는 실생활 예제 5개 + 출력 서술형 + 서로 다른 OX + 5지선다 + 자동 채점</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번"></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p class="small">채점 후 TXT 파일명: <b>학번_이름_OOP상속_점수_응시시각.txt</b></p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념 정리</h2>
+<p>
+<span class="badge">상속 Inheritance</span>은 기존 클래스의 속성과 기능을 새로운 클래스가 물려받아 재사용하는 객체지향 프로그래밍 원리입니다.
+</p>
+<div class="explain">
+부모 클래스는 공통 기능을 제공하고, 자식 클래스는 그 기능을 물려받아 사용하거나 새 기능을 추가할 수 있습니다.
+예를 들어 <b>동물</b> 클래스에 “소리내기” 기능이 있고, <b>강아지</b> 클래스가 이를 물려받아 “멍멍”처럼 구체화할 수 있습니다.
+상속을 사용하면 중복 코드를 줄이고, 비슷한 객체들을 체계적으로 설계할 수 있습니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🐶 동물과 강아지",
+concept:"Animal 부모 클래스의 eat() 기능을 Dog 자식 클래스가 물려받고, Dog만의 bark() 기능을 추가합니다.",
+code:`class Animal:
+    def eat(self):
+        print("먹이를 먹습니다.")
+
+class Dog(Animal):
+    def bark(self):
+        print("멍멍!")
+
+dog = Dog()
+dog.eat()
+dog.bark()`,
+output:"먹이를 먹습니다.\n멍멍!",
+shortKey:"먹이를 먹습니다 멍멍",
+oxType:"기본 개념 판단형 OX",
+ox:"Dog 클래스는 Animal 클래스를 상속받았기 때문에 eat() 메서드를 직접 다시 만들지 않아도 사용할 수 있다.",
+oxAns:"O",
+oxExp:"class Dog(Animal): 형태는 Dog가 Animal을 상속받는다는 뜻입니다. 따라서 Animal의 eat() 메서드를 Dog 인스턴스가 사용할 수 있습니다.",
+mc:"이 코드에서 부모 클래스는 무엇인가?",
+choices:["① Dog","② dog","③ Animal","④ bark","⑤ eat"],
+mcAns:"3",
+mcExp:"Animal이 부모 클래스이고 Dog가 Animal을 상속받은 자식 클래스입니다."
+},
+{
+title:"🚗 자동차와 전기차",
+concept:"Car 부모 클래스의 drive() 기능을 ElectricCar가 물려받고, charge() 기능을 새로 추가합니다.",
+code:`class Car:
+    def drive(self):
+        print("자동차가 달립니다.")
+
+class ElectricCar(Car):
+    def charge(self):
+        print("전기차를 충전합니다.")
+
+ev = ElectricCar()
+ev.drive()
+ev.charge()`,
+output:"자동차가 달립니다.\n전기차를 충전합니다.",
+shortKey:"자동차가 달립니다 전기차를 충전합니다",
+oxType:"기능 추가형 OX",
+ox:"ElectricCar는 Car의 drive() 기능을 사용할 수 있고, 자신만의 charge() 기능도 가질 수 있다.",
+oxAns:"O",
+oxExp:"상속은 부모 기능을 물려받으면서 자식 클래스에 새로운 기능을 추가할 수 있게 합니다.",
+mc:"ev.drive()가 실행될 수 있는 이유로 가장 적절한 것은?",
+choices:["① ev가 문자열이기 때문에","② ElectricCar가 Car를 상속받았기 때문에","③ charge()가 drive()를 삭제했기 때문에","④ Car가 ElectricCar를 상속받았기 때문에","⑤ print()가 클래스를 자동 생성하기 때문에"],
+mcAns:"2",
+mcExp:"ElectricCar는 Car의 자식 클래스이므로 Car에 정의된 drive() 메서드를 사용할 수 있습니다."
+},
+{
+title:"👨‍🏫 사람과 선생님",
+concept:"Person 부모 클래스의 introduce() 메서드를 Teacher 자식 클래스에서 오버라이딩하여 더 구체적인 출력으로 바꿉니다.",
+code:`class Person:
+    def introduce(self):
+        print("저는 사람입니다.")
+
+class Teacher(Person):
+    def introduce(self):
+        print("저는 선생님입니다.")
+
+t = Teacher()
+t.introduce()`,
+output:"저는 선생님입니다.",
+shortKey:"저는 선생님입니다",
+oxType:"오버라이딩 판단형 OX",
+ox:"Teacher 클래스에서 introduce()를 다시 정의했으므로 Teacher 인스턴스는 부모의 문장 대신 자식 클래스의 문장을 출력한다.",
+oxAns:"O",
+oxExp:"자식 클래스가 부모 클래스와 같은 이름의 메서드를 다시 정의하는 것을 오버라이딩이라고 합니다.",
+mc:"이 예제에서 나타나는 OOP 개념으로 가장 적절한 것은?",
+choices:["① 캡슐화만 사용됨","② 메서드 오버라이딩","③ 리스트 슬라이싱","④ 파일 입출력","⑤ 예외 처리"],
+mcAns:"2",
+mcExp:"Teacher가 Person의 introduce()를 다시 정의했으므로 메서드 오버라이딩 사례입니다."
+},
+{
+title:"🏦 계좌와 적금계좌",
+concept:"Account 부모 클래스의 show() 기능을 SavingAccount가 물려받고, interest() 기능을 추가합니다.",
+code:`class Account:
+    def __init__(self, owner, money):
+        self.owner = owner
+        self.money = money
+
+    def show(self):
+        print(self.owner + "님의 잔액:", self.money)
+
+class SavingAccount(Account):
+    def interest(self):
+        print("이자가 지급됩니다.")
+
+s = SavingAccount("지민", 30000)
+s.show()
+s.interest()`,
+output:"지민님의 잔액: 30000\n이자가 지급됩니다.",
+shortKey:"지민님의 잔액: 30000 이자가 지급됩니다",
+oxType:"생성자 상속형 OX",
+ox:"SavingAccount 클래스에는 __init__이 직접 정의되어 있지 않지만, Account의 __init__을 이용해 owner와 money를 저장할 수 있다.",
+oxAns:"O",
+oxExp:"자식 클래스에 생성자가 없으면 부모 클래스의 생성자를 사용할 수 있습니다.",
+mc:"s = SavingAccount('지민', 30000)이 가능한 이유는?",
+choices:["① SavingAccount가 Account의 __init__을 사용할 수 있기 때문","② interest()가 owner를 삭제하기 때문","③ show()가 클래스를 새로 만들기 때문","④ money가 항상 0이기 때문","⑤ 상속과 무관하게 모든 클래스가 자동으로 두 값을 받기 때문"],
+mcAns:"1",
+mcExp:"SavingAccount는 Account를 상속받았고, Account의 __init__ 메서드가 owner와 money를 받습니다."
+},
+{
+title:"🎮 게임 캐릭터와 마법사",
+concept:"Character 부모 클래스의 기본 공격을 Wizard가 물려받고, magic() 메서드를 추가하여 마법 공격을 표현합니다.",
+code:`class Character:
+    def attack(self):
+        print("기본 공격!")
+
+class Wizard(Character):
+    def magic(self):
+        print("파이어볼!")
+
+w = Wizard()
+w.attack()
+w.magic()`,
+output:"기본 공격!\n파이어볼!",
+shortKey:"기본 공격 파이어볼",
+oxType:"상황 적용형 OX",
+ox:"Wizard 인스턴스는 Character의 attack()을 사용할 수 있지만 magic()은 사용할 수 없다.",
+oxAns:"X",
+oxExp:"Wizard 클래스 안에 magic()이 직접 정의되어 있으므로 Wizard 인스턴스는 attack()과 magic()을 모두 사용할 수 있습니다.",
+mc:"이 예제를 상속 관점에서 설명한 것으로 가장 적절한 것은?",
+choices:["① Wizard는 Character의 기능을 물려받고 마법 기능을 추가했다","② Character는 Wizard의 magic()을 자동으로 사용한다","③ w는 클래스이고 Wizard는 인스턴스이다","④ attack()은 실행되지 않는다","⑤ 상속을 사용하면 자식 클래스의 기능은 모두 사라진다"],
+mcAns:"1",
+mcExp:"Wizard는 Character를 상속받아 attack()을 사용하고, 자기만의 magic() 기능도 가집니다."
+}
+];
+
+const exDiv=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+exDiv.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 부모 클래스의 기능을 자식 클래스가 물려받아 사용하는 구조입니다.
+부모 클래스에는 공통 기능을 두고, 자식 클래스에는 구체적인 기능을 추가하거나 같은 이름의 메서드를 다시 정의할 수 있습니다.
+이처럼 상속은 코드 재사용성과 구조적 설계를 높여 줍니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 직접 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\\n","<br>")}</p>
+<p class="explain">상세 풀이: 자식 클래스 인스턴스가 부모 클래스의 메서드와 자식 클래스의 메서드를 순서대로 호출하므로 위와 같은 출력이 나타납니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label><input type="radio" name="ox${i}" value="O"> O</label>
+<label><input type="radio" name="ox${i}" value="X"> X</label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label><input type="radio" name="mc${i}" value="${j+1}"> ${c}</label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll("!","").trim();
+}
+
+function grade(){
+let score=0;
+let total=15;
+let detail=[];
+let fullExplain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.shortKey));
+if(shortOk) score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답 예시: ${e.output.replaceAll("\n"," / ")} | ${shortOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 출력 서술형 풀이: ${e.output.replaceAll("\n"," / ")}가 출력된다. 이유: 자식 클래스 인스턴스가 부모에게 물려받은 메서드 또는 자식 클래스에서 정의한 메서드를 순서대로 실행하기 때문이다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk) score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk) score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let sname=document.getElementById("sname").value.trim()||"이름";
+let now=new Date();
+let displayTime=now.toLocaleString("ko-KR");
+let fileTime=now.toISOString().replaceAll(":","-").slice(0,19);
+
+let txt=`OOP 기초 상속 평가 결과
+
+학번: ${sid}
+이름: ${sname}
+점수: ${percent}점
+정답 수: ${score}/${total}
+응시시각: ${displayTime}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${fullExplain.join("\n")}
+
+[학습 요약]
+상속은 부모 클래스의 속성과 메서드를 자식 클래스가 물려받아 사용하는 객체지향 프로그래밍 원리이다.
+자식 클래스는 부모의 기능을 그대로 사용할 수도 있고, 새로운 기능을 추가할 수도 있으며,
+부모와 같은 이름의 메서드를 다시 정의하여 오버라이딩할 수도 있다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${sname}_OOP상속_${percent}점_${fileTime}.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

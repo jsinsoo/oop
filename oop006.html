@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP Property 데코레이터 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#ecfeff,#eef2ff);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#0e7490,#2563eb);color:white;text-align:center;padding:46px 24px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(30,64,175,.16)}
+h2{color:#0e7490;border-bottom:3px solid #a5f3fc;padding-bottom:10px}
+h3{color:#155e75}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#ecfeff;border-left:7px solid #22d3ee;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #bae6fd;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#0e7490;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#0e7490;margin-top:15px}
+.badge{display:inline-block;background:#cffafe;color:#155e75;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🏷️ OOP 응용: Property 데코레이터</h1>
+<p>@property · setter · 값 검증 · 계산형 속성 실생활 예제 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번 "></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p>채점 후 <b>학번_이름_OOPProperty 데코레이터_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">@property</span>는 메서드를 속성처럼 사용할 수 있게 해 주는 데코레이터입니다.</p>
+<p><span class="badge">@속성이름.setter</span>는 속성에 값을 대입할 때 실행되는 메서드입니다.</p>
+<div class="explain">
+예를 들어 <b>student.score</b>처럼 변수처럼 보이지만 실제로는 내부에서 메서드가 실행됩니다.
+이를 이용하면 값을 읽을 때 계산하거나, 값을 바꿀 때 조건을 검사할 수 있습니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"📚 학생 점수 등급 관리",
+concept:"점수를 property로 관리하고, setter에서 0~100 사이의 값만 허용합니다. grade property는 점수에 따라 등급을 자동 계산합니다.",
+code:`class Student:
+    def __init__(self, name, score):
+        self.name = name
+        self._score = 0
+        self.score = score
+
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, value):
+        if 0 <= value <= 100:
+            self._score = value
+        else:
+            print("점수 오류:", value)
+
+    @property
+    def grade(self):
+        if self._score >= 90:
+            return "A"
+        elif self._score >= 80:
+            return "B"
+        else:
+            return "C"
+
+s = Student("민수", 95)
+print("학생:", s.name)
+print("점수:", s.score)
+print("등급:", s.grade)`,
+output:"학생: 민수\n점수: 95\n등급: A",
+key:"학생: 민수 점수: 95 등급: A",
+oxType:"값 검증형 OX",
+ox:"score setter는 점수가 0 이상 100 이하일 때만 _score에 저장하도록 한다.",
+oxAns:"O",
+oxExp:"setter 내부의 if 0 <= value <= 100 조건이 점수 범위를 검사합니다.",
+mc:"grade property의 역할로 가장 적절한 것은?",
+choices:["① 점수를 직접 입력받는다","② 점수에 따라 등급을 자동 계산한다","③ 학생 이름을 삭제한다","④ 클래스 이름을 바꾼다","⑤ 객체 생성을 막는다"],
+mcAns:"2",
+mcExp:"grade는 _score 값을 기준으로 A, B, C 등급을 반환하는 계산형 property입니다."
+},
+{
+title:"🏦 은행 계좌 잔액 보호",
+concept:"잔액을 직접 수정하지 않고 balance setter를 통해 음수 잔액이 되지 않도록 보호합니다.",
+code:`class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self._balance = 0
+        self.balance = balance
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        if value >= 0:
+            self._balance = value
+        else:
+            print("잔액은 음수가 될 수 없습니다.")
+
+account = BankAccount("지아", 10000)
+account.balance = -5000
+print("예금주:", account.owner)
+print("현재 잔액:", account.balance)`,
+output:"잔액은 음수가 될 수 없습니다.\n예금주: 지아\n현재 잔액: 10000",
+key:"잔액은 음수가 될 수 없습니다 예금주: 지아 현재 잔액: 10000",
+oxType:"오류 예방형 OX",
+ox:"account.balance = -5000을 실행하면 setter가 동작하여 음수 값을 막고 기존 잔액을 유지한다.",
+oxAns:"O",
+oxExp:"setter가 value >= 0 조건을 확인하므로 -5000은 저장되지 않고 오류 메시지가 출력됩니다.",
+mc:"이 코드에서 balance를 property로 만든 가장 중요한 이유는?",
+choices:["① 잔액 값을 안전하게 검증하고 보호하기 위해","② print문을 없애기 위해","③ owner를 숫자로 바꾸기 위해","④ 객체를 리스트로 만들기 위해","⑤ 반복문을 사용하기 위해"],
+mcAns:"1",
+mcExp:"property와 setter를 사용하면 속성처럼 대입하면서도 내부에서 검증 로직을 실행할 수 있습니다."
+},
+{
+title:"🌡️ 체온 상태 자동 판정",
+concept:"체온 temperature를 property로 관리하고, status property가 정상·미열·고열 상태를 자동으로 계산합니다.",
+code:`class BodyCheck:
+    def __init__(self, name, temperature):
+        self.name = name
+        self._temperature = temperature
+
+    @property
+    def temperature(self):
+        return self._temperature
+
+    @property
+    def status(self):
+        if self._temperature >= 38:
+            return "고열"
+        elif self._temperature >= 37:
+            return "미열"
+        else:
+            return "정상"
+
+p = BodyCheck("수진", 37.5)
+print("이름:", p.name)
+print("체온:", p.temperature)
+print("상태:", p.status)`,
+output:"이름: 수진\n체온: 37.5\n상태: 미열",
+key:"이름: 수진 체온: 37.5 상태: 미열",
+oxType:"계산형 property 판단 OX",
+ox:"status는 별도로 저장된 값이 아니라 temperature 값을 바탕으로 계산되어 반환된다.",
+oxAns:"O",
+oxExp:"status property는 _temperature 값을 읽어 조건문으로 정상, 미열, 고열 중 하나를 반환합니다.",
+mc:"p.status를 사용할 때 괄호를 붙이지 않는 이유로 알맞은 것은?",
+choices:["① status가 property이기 때문","② status가 리스트이기 때문","③ status가 반복문이기 때문","④ status가 클래스이기 때문","⑤ status가 삭제되었기 때문"],
+mcAns:"1",
+mcExp:"@property를 붙인 메서드는 p.status처럼 속성 형태로 접근합니다."
+},
+{
+title:"🛒 쇼핑몰 상품 할인 가격",
+concept:"원가와 할인율을 저장하고, sale_price property가 할인된 실제 판매가를 자동 계산합니다.",
+code:`class Product:
+    def __init__(self, name, price, discount):
+        self.name = name
+        self.price = price
+        self.discount = discount
+
+    @property
+    def sale_price(self):
+        return int(self.price * (1 - self.discount))
+
+    @property
+    def label(self):
+        return self.name + " 할인 상품"
+
+item = Product("무선마우스", 20000, 0.15)
+print(item.label)
+print("정가:", item.price)
+print("판매가:", item.sale_price)`,
+output:"무선마우스 할인 상품\n정가: 20000\n판매가: 17000",
+key:"무선마우스 할인 상품 정가: 20000 판매가: 17000",
+oxType:"실생활 적용형 OX",
+ox:"sale_price는 price와 discount를 이용해 할인된 가격을 계산하는 property이다.",
+oxAns:"O",
+oxExp:"20000 × (1 - 0.15) = 17000이므로 판매가는 17000입니다.",
+mc:"sale_price 계산식으로 가장 알맞은 것은?",
+choices:["① price + discount","② price * discount","③ price * (1 - discount)","④ price - name","⑤ discount / price"],
+mcAns:"3",
+mcExp:"할인율을 적용한 판매가는 원가에 1에서 할인율을 뺀 값을 곱해 계산합니다."
+},
+{
+title:"☕ 카페 주문 총액과 포인트",
+concept:"수량과 단가를 바탕으로 total property가 주문 총액을 계산하고, point property가 적립 포인트를 계산합니다.",
+code:`class CafeOrder:
+    def __init__(self, menu, count, price):
+        self.menu = menu
+        self.count = count
+        self.price = price
+
+    @property
+    def total(self):
+        return self.count * self.price
+
+    @property
+    def point(self):
+        return self.total // 100
+
+order = CafeOrder("라떼", 3, 4500)
+print("메뉴:", order.menu)
+print("총액:", order.total)
+print("적립 포인트:", order.point)`,
+output:"메뉴: 라떼\n총액: 13500\n적립 포인트: 135",
+key:"메뉴: 라떼 총액: 13500 적립 포인트: 135",
+oxType:"연쇄 계산형 OX",
+ox:"point property는 total property의 계산 결과를 이용해 적립 포인트를 계산한다.",
+oxAns:"O",
+oxExp:"point는 self.total // 100을 반환하므로 total property의 결과 13500을 이용합니다.",
+mc:"order.point의 결과가 135인 이유로 가장 적절한 것은?",
+choices:["① 13500을 100으로 나눈 몫이 135이기 때문","② 라떼가 문자열이기 때문","③ count가 0이기 때문","④ price가 자동 삭제되기 때문","⑤ total이 항상 100이기 때문"],
+mcAns:"1",
+mcExp:"13500 // 100은 몫 135를 반환합니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+area.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 <b>@property</b>를 사용하여 메서드를 속성처럼 읽게 만들고,
+필요한 경우 <b>setter</b>를 통해 값 대입 과정에서 검증을 수행합니다.
+또한 저장된 값을 그대로 보여 주는 속성뿐 아니라, 다른 값을 계산해서 보여 주는 계산형 속성도 만들 수 있습니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\\n","<br>")}</p>
+<p class="explain">상세 풀이: property가 속성처럼 호출되지만 내부적으로는 메서드가 실행되어 출력값이 결정됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").trim();
+}
+
+function grade(){
+let score=0,total=15;
+let detail=[], explain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.key));
+if(shortOk)score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} 출력 풀이: property 또는 setter 실행 결과에 따라 ${e.output.replaceAll("\n"," / ")}가 출력된다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk)score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk)score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let name=document.getElementById("sname").value.trim()||"이름";
+
+let txt=`OOP 응용 Property 데코레이터 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+@property는 메서드를 속성처럼 사용할 수 있게 한다.
+setter는 속성에 값을 대입할 때 검증 로직을 실행할 수 있게 한다.
+Property 데코레이터는 캡슐화, 값 검증, 계산형 속성, 읽기 전용 속성 구현에 자주 사용된다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${name}_OOPProperty 데코레이터_${percent}점.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

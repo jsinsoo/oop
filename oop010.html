@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP MRO 평가 수정본</title>
+<style>
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#eff6ff,#f5f3ff);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#2563eb,#7c3aed);color:white;text-align:center;padding:42px}
+.wrap{max-width:1150px;margin:auto;padding:24px}
+.card{background:white;border-radius:24px;padding:26px;margin:24px 0;box-shadow:0 10px 28px rgba(30,64,175,.15)}
+h2{color:#2563eb;border-bottom:3px solid #bfdbfe;padding-bottom:10px}
+h3{color:#1d4ed8}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:14px;overflow:auto;white-space:pre-wrap}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#eef2ff;border-left:7px solid #6366f1;padding:15px;border-radius:14px;margin:12px 0}
+.qbox{background:#fbfdff;border:1px solid #c7d2fe;border-radius:18px;padding:18px;margin:20px 0}
+.choice{display:flex;gap:10px;align-items:flex-start;background:#f8fafc;border:1px solid #dbe4f0;border-radius:12px;padding:10px;margin:8px 0}
+.choice input{margin-top:6px}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#2563eb;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#2563eb;margin-top:15px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧩 OOP 응용: MRO</h1>
+<p>다중 상속 · 메서드 탐색 순서 · mro() 학습 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text"></div>
+<div>이름 <input id="sname" type="text"></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP_MRO_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>핵심 개념</h2>
+<div class="explain">
+<b>MRO(Method Resolution Order)</b>는 다중 상속에서 어떤 부모 클래스의 메서드를 먼저 찾을지 정하는 순서입니다.<br>
+파이썬은 보통 왼쪽 부모 클래스를 먼저 탐색하며, <b>클래스명.mro()</b>로 탐색 순서를 확인할 수 있습니다.
+</div>
+</section>
+
+<section class="card">
+<h2>실생활 예제 5개</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🚗 자율주행 자동차",
+concept:"SmartCar가 Car와 AI를 다중 상속할 때, Car가 왼쪽에 있으므로 Car.start()가 먼저 실행됩니다.",
+code:`class Car:
+    def start(self):
+        print("자동차 시동")
+
+class AI:
+    def start(self):
+        print("AI 자율주행 시작")
+
+class SmartCar(Car, AI):
+    pass
+
+s = SmartCar()
+s.start()
+print(SmartCar.mro()[0].__name__)
+print(SmartCar.mro()[1].__name__)`,
+output:"자동차 시동\nSmartCar\nCar",
+key:"자동차 시동 SmartCar Car",
+ox:"SmartCar(Car, AI)에서는 Car가 AI보다 먼저 탐색된다.",
+oxAns:"O",
+oxExp:"다중 상속에서 왼쪽에 있는 Car가 먼저 탐색됩니다.",
+mc:"먼저 실행되는 start()는?",
+choices:["① AI.start()","② Car.start()","③ object.start()","④ 무작위 실행","⑤ 실행되지 않음"],
+mcAns:"2",
+mcExp:"SmartCar(Car, AI)이므로 Car.start()가 먼저 실행됩니다."
+},
+{
+title:"📱 스마트 기기",
+concept:"SmartDevice가 Phone과 Camera를 상속받으면 Phone의 use()가 먼저 선택됩니다.",
+code:`class Phone:
+    def use(self):
+        print("전화 기능 실행")
+
+class Camera:
+    def use(self):
+        print("카메라 기능 실행")
+
+class SmartDevice(Phone, Camera):
+    pass
+
+d = SmartDevice()
+d.use()
+print(SmartDevice.mro()[1].__name__)
+print(SmartDevice.mro()[2].__name__)`,
+output:"전화 기능 실행\nPhone\nCamera",
+key:"전화 기능 실행 Phone Camera",
+ox:"SmartDevice에서 use()를 호출하면 Phone의 use()가 먼저 실행된다.",
+oxAns:"O",
+oxExp:"Phone이 왼쪽 부모 클래스이므로 Camera보다 먼저 탐색됩니다.",
+mc:"MRO를 확인하는 메서드는?",
+choices:["① len()","② type()","③ mro()","④ input()","⑤ append()"],
+mcAns:"3",
+mcExp:"클래스명.mro()로 메서드 탐색 순서를 확인할 수 있습니다."
+},
+{
+title:"🏫 온라인 학교 플랫폼",
+concept:"LMS가 Video와 Quiz를 상속받을 때, run()은 Video에서 먼저 찾습니다.",
+code:`class Video:
+    def run(self):
+        print("영상 강의 실행")
+
+class Quiz:
+    def run(self):
+        print("퀴즈 실행")
+
+class LMS(Video, Quiz):
+    pass
+
+l = LMS()
+l.run()
+print(LMS.mro()[0].__name__)
+print(LMS.mro()[1].__name__)`,
+output:"영상 강의 실행\nLMS\nVideo",
+key:"영상 강의 실행 LMS Video",
+ox:"LMS(Video, Quiz)에서는 Quiz가 Video보다 먼저 탐색된다.",
+oxAns:"X",
+oxExp:"왼쪽에 있는 Video가 먼저 탐색됩니다.",
+mc:"LMS(Video, Quiz)는 어떤 상속인가?",
+choices:["① 단일 상속","② 다중 상속","③ 추상 클래스만 사용","④ 컴포지션만 사용","⑤ 상속 아님"],
+mcAns:"2",
+mcExp:"부모 클래스가 Video, Quiz 두 개이므로 다중 상속입니다."
+},
+{
+title:"🍔 배달 주문 시스템",
+concept:"Delivery가 Order와 Payment를 상속받으면 process()는 Order에서 먼저 탐색됩니다.",
+code:`class Order:
+    def process(self):
+        print("주문 처리")
+
+class Payment:
+    def process(self):
+        print("결제 처리")
+
+class Delivery(Order, Payment):
+    pass
+
+d = Delivery()
+d.process()
+print(Delivery.mro()[1].__name__)
+print(Delivery.mro()[2].__name__)`,
+output:"주문 처리\nOrder\nPayment",
+key:"주문 처리 Order Payment",
+ox:"Delivery(Order, Payment)에서 process()는 Order의 메서드가 먼저 실행된다.",
+oxAns:"O",
+oxExp:"Order가 왼쪽 부모 클래스이므로 먼저 탐색됩니다.",
+mc:"process() 탐색 순서로 적절한 것은?",
+choices:["① Payment → Order","② Order → Payment","③ object → Payment","④ 무작위","⑤ 탐색하지 않음"],
+mcAns:"2",
+mcExp:"Delivery(Order, Payment)이므로 Order를 먼저 탐색합니다."
+},
+{
+title:"🎮 게임 캐릭터",
+concept:"Hero가 Warrior와 Mage를 상속받으면 skill()은 Warrior에서 먼저 실행됩니다.",
+code:`class Warrior:
+    def skill(self):
+        print("검 공격")
+
+class Mage:
+    def skill(self):
+        print("마법 공격")
+
+class Hero(Warrior, Mage):
+    pass
+
+h = Hero()
+h.skill()
+print(Hero.mro()[0].__name__)
+print(Hero.mro()[1].__name__)`,
+output:"검 공격\nHero\nWarrior",
+key:"검 공격 Hero Warrior",
+ox:"Hero(Warrior, Mage)에서는 Mage.skill()이 먼저 실행된다.",
+oxAns:"X",
+oxExp:"Warrior가 왼쪽 부모이므로 Warrior.skill()이 먼저 실행됩니다.",
+mc:"Hero 클래스 설명으로 알맞은 것은?",
+choices:["① 다중 상속 클래스","② 리스트","③ 함수","④ 문자열","⑤ 소멸자"],
+mcAns:"1",
+mcExp:"Hero는 Warrior와 Mage 두 부모를 상속받은 다중 상속 클래스입니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+const box=document.createElement("div");
+box.className="qbox";
+box.innerHTML=`
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+<h4>📝 상세 설명</h4>
+<div class="explain">MRO는 다중 상속에서 메서드 이름이 겹칠 때 어떤 부모 클래스의 메서드를 먼저 사용할지 결정합니다.</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}"></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\n","<br>")}</p>
+
+<h4>2) OX 문제</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+`;
+area.appendChild(box);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").trim();
+}
+
+function grade(){
+let score=0,total=15;
+let detail=[], explain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.key));
+if(shortOk)score++;
+detail.push(`예제${i+1} 서술형: ${short||"미응답"} | ${shortOk?"정답":"오답"}`);
+explain.push(`예제${i+1} 출력 정답: ${e.output.replaceAll("\n"," / ")}`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+if(oxVal===e.oxAns)score++;
+detail.push(`예제${i+1} OX: ${oxVal} | 정답: ${e.oxAns}`);
+explain.push(`예제${i+1} OX 해설: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+if(mcVal===e.mcAns)score++;
+detail.push(`예제${i+1} 객관식: ${mcVal} | 정답: ${e.mcAns}`);
+explain.push(`예제${i+1} 객관식 해설: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 (${score}/${total})`;
+
+let sid=document.getElementById("sid").value||"학번";
+let name=document.getElementById("sname").value||"이름";
+
+let txt=`OOP MRO 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+
+[문항 결과]
+${detail.join("\n")}
+
+[상세 풀이]
+${explain.join("\n")}
+
+[핵심 개념]
+MRO는 Method Resolution Order의 약자이다.
+다중 상속에서 같은 이름의 메서드가 여러 부모 클래스에 있을 때 탐색 순서를 결정한다.
+클래스명.mro()로 확인할 수 있다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${name}_OOP_MRO_${percent}점.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

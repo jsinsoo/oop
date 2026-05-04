@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 다형성 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f0fdf4,#e0f2fe);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#047857,#2563eb);color:white;text-align:center;padding:44px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:24px;padding:26px;margin:24px 0;box-shadow:0 12px 30px rgba(20,120,120,.15)}
+h2{color:#047857;border-bottom:3px solid #bbf7d0;padding-bottom:10px}
+h3{color:#065f46}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#f0fdf4;border-left:7px solid #34d399;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #bbf7d0;border-radius:18px;padding:18px;margin:18px 0}
+label{display:block;background:#f8fafc;border:1px solid #d8e3f7;border-radius:12px;padding:9px;margin:7px 0;cursor:pointer}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:82px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#047857;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+button:hover{background:#065f46}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#047857;margin-top:15px}
+.badge{display:inline-block;background:#dcfce7;color:#065f46;border-radius:999px;padding:5px 12px;font-weight:900}
+.small{color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎭 OOP 기초: 다형성</h1>
+<p>출력이 있는 실생활 예제 5개 + 출력 서술형 + 서로 다른 OX + 5지선다 + 자동 채점</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번 "></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p class="small">채점 후 TXT 파일명: <b>학번_이름_OOP다형성_점수_응시시각.txt</b></p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념 정리</h2>
+<p>
+<span class="badge">다형성 Polymorphism</span>은 같은 이름의 메서드가 객체에 따라 서로 다르게 동작하는 객체지향 프로그래밍 원리입니다.
+</p>
+<div class="explain">
+예를 들어 <b>소리내기</b>라는 같은 기능이라도 강아지는 “멍멍”, 고양이는 “야옹”이라고 출력할 수 있습니다.
+즉, 코드에서는 같은 메서드 이름을 사용하지만, 실제 실행 결과는 객체의 종류에 따라 달라집니다.
+다형성은 여러 객체를 같은 방식으로 다루면서도 각 객체의 고유한 행동을 표현할 수 있게 해 줍니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🐶🐱 동물 소리",
+concept:"Dog와 Cat은 모두 sound()라는 같은 이름의 메서드를 가지지만, 각 객체는 서로 다른 소리를 출력합니다.",
+code:`class Dog:
+    def sound(self):
+        print("멍멍!")
+
+class Cat:
+    def sound(self):
+        print("야옹!")
+
+animals = [Dog(), Cat()]
+
+for animal in animals:
+    animal.sound()`,
+output:"멍멍!\n야옹!",
+shortKey:"멍멍 야옹",
+oxType:"기본 개념 판단형 OX",
+ox:"Dog와 Cat은 같은 sound() 메서드 이름을 사용하지만, 객체에 따라 서로 다른 출력이 나타난다.",
+oxAns:"O",
+oxExp:"같은 메서드 이름 sound()를 호출해도 Dog 객체는 '멍멍!', Cat 객체는 '야옹!'을 출력합니다. 이것이 다형성의 핵심입니다.",
+mc:"이 코드에서 다형성이 나타나는 부분으로 가장 적절한 것은?",
+choices:["① animals 리스트에 객체가 들어 있다","② 같은 sound() 호출이 객체 종류에 따라 다르게 실행된다","③ print()가 한 번만 사용된다","④ 클래스 이름이 모두 같다","⑤ for문이 실행되지 않는다"],
+mcAns:"2",
+mcExp:"다형성은 같은 메서드 호출이 객체의 실제 타입에 따라 다르게 동작하는 것입니다."
+},
+{
+title:"🚗🚲 이동수단 출발",
+concept:"Car와 Bicycle은 모두 move() 메서드를 가지며, 같은 move() 호출이 자동차와 자전거에 맞게 다르게 출력됩니다.",
+code:`class Car:
+    def move(self):
+        print("자동차가 도로를 달립니다.")
+
+class Bicycle:
+    def move(self):
+        print("자전거가 자전거도로를 달립니다.")
+
+vehicles = [Car(), Bicycle()]
+
+for v in vehicles:
+    v.move()`,
+output:"자동차가 도로를 달립니다.\n자전거가 자전거도로를 달립니다.",
+shortKey:"자동차가 도로를 달립니다 자전거가 자전거도로를 달립니다",
+oxType:"상황 적용형 OX",
+ox:"vehicles 리스트의 객체들은 모두 move()라는 같은 이름의 기능으로 처리할 수 있다.",
+oxAns:"O",
+oxExp:"Car와 Bicycle은 모두 move() 메서드를 가지고 있으므로 반복문에서 v.move()라는 같은 코드로 처리할 수 있습니다.",
+mc:"다형성을 활용했을 때 얻는 장점으로 가장 적절한 것은?",
+choices:["① 객체마다 완전히 다른 호출문을 반드시 써야 한다","② 여러 객체를 같은 방식으로 호출하면서 각자 다른 동작을 하게 할 수 있다","③ 모든 출력이 항상 같아진다","④ 클래스 정의가 불가능해진다","⑤ 반복문을 사용할 수 없다"],
+mcAns:"2",
+mcExp:"다형성을 사용하면 여러 객체를 하나의 공통 메서드 이름으로 다루면서도 결과는 객체별로 달라질 수 있습니다."
+},
+{
+title:"💳 결제 방식",
+concept:"CashPay와 CardPay는 모두 pay() 메서드를 사용하지만, 결제 방식에 따라 다른 문장을 출력합니다.",
+code:`class CashPay:
+    def pay(self):
+        print("현금으로 결제합니다.")
+
+class CardPay:
+    def pay(self):
+        print("카드로 결제합니다.")
+
+payments = [CashPay(), CardPay()]
+
+for p in payments:
+    p.pay()`,
+output:"현금으로 결제합니다.\n카드로 결제합니다.",
+shortKey:"현금으로 결제합니다 카드로 결제합니다",
+oxType:"비교형 OX",
+ox:"CashPay와 CardPay는 pay()라는 같은 메서드 이름을 쓰므로 두 객체의 출력 결과도 반드시 같아야 한다.",
+oxAns:"X",
+oxExp:"다형성에서는 같은 메서드 이름을 쓰더라도 객체에 따라 실행 내용과 출력 결과가 달라질 수 있습니다.",
+mc:"다음 중 p.pay()가 실행될 때 실제로 결정되는 것은?",
+choices:["① p가 가리키는 객체의 pay() 메서드","② 항상 CashPay의 pay()만 실행","③ 항상 CardPay의 pay()만 실행","④ 리스트의 이름 payments","⑤ 클래스 정의 순서와 무관하게 마지막 print문만 실행"],
+mcAns:"1",
+mcExp:"반복문에서 p가 CashPay 객체를 가리키면 CashPay의 pay(), CardPay 객체를 가리키면 CardPay의 pay()가 실행됩니다."
+},
+{
+title:"📢 알림 메시지",
+concept:"EmailNotice와 SmsNotice는 모두 send() 메서드를 가지지만, 알림 전송 방식에 따라 다르게 출력합니다.",
+code:`class EmailNotice:
+    def send(self):
+        print("이메일 알림을 보냅니다.")
+
+class SmsNotice:
+    def send(self):
+        print("문자 알림을 보냅니다.")
+
+notices = [EmailNotice(), SmsNotice()]
+
+for notice in notices:
+    notice.send()`,
+output:"이메일 알림을 보냅니다.\n문자 알림을 보냅니다.",
+shortKey:"이메일 알림을 보냅니다 문자 알림을 보냅니다",
+oxType:"오류 찾기형 OX",
+ox:"notice.send()는 매번 같은 이름으로 호출되지만, notice가 어떤 객체인지에 따라 실행되는 메서드가 달라진다.",
+oxAns:"O",
+oxExp:"notice가 EmailNotice 객체일 때는 이메일 알림을, SmsNotice 객체일 때는 문자 알림을 출력합니다.",
+mc:"이 예제를 다형성 관점에서 설명한 것으로 가장 적절한 것은?",
+choices:["① EmailNotice와 SmsNotice는 같은 send() 인터페이스를 가진다","② send()는 파이썬 예약어라서 반드시 써야 한다","③ notices에는 문자열만 저장된다","④ send() 이름이 같으면 클래스도 반드시 같아야 한다","⑤ 객체마다 메서드 이름이 달라야 다형성이다"],
+mcAns:"1",
+mcExp:"서로 다른 클래스가 같은 이름의 send() 메서드를 제공하므로 같은 방식으로 호출할 수 있습니다."
+},
+{
+title:"🍔 주문 처리",
+concept:"BurgerOrder와 PizzaOrder는 모두 make() 메서드를 가지며, 주문 종류에 따라 서로 다른 조리 결과를 출력합니다.",
+code:`class BurgerOrder:
+    def make(self):
+        print("햄버거를 만듭니다.")
+
+class PizzaOrder:
+    def make(self):
+        print("피자를 만듭니다.")
+
+orders = [BurgerOrder(), PizzaOrder()]
+
+for order in orders:
+    order.make()`,
+output:"햄버거를 만듭니다.\n피자를 만듭니다.",
+shortKey:"햄버거를 만듭니다 피자를 만듭니다",
+oxType:"실생활 적용형 OX",
+ox:"주문 객체들이 make()라는 공통 메서드를 가지면, 주문 처리 코드는 order.make()처럼 단순해질 수 있다.",
+oxAns:"O",
+oxExp:"주문 종류가 달라도 make()라는 공통 메서드를 제공하면 반복문에서 같은 방식으로 처리할 수 있습니다.",
+mc:"다음 중 이 코드의 orders 리스트에 PizzaOrder()가 들어 있을 때 출력되는 문장은?",
+choices:["① 햄버거를 만듭니다.","② 피자를 만듭니다.","③ 주문을 취소합니다.","④ make를 삭제합니다.","⑤ 아무것도 출력되지 않습니다."],
+mcAns:"2",
+mcExp:"PizzaOrder 클래스의 make() 메서드는 '피자를 만듭니다.'를 출력합니다."
+}
+];
+
+const exDiv=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+exDiv.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 서로 다른 클래스가 같은 이름의 메서드를 가지고 있을 때,
+반복문에서 같은 호출문을 사용해도 객체의 종류에 따라 서로 다른 동작이 실행되는 구조입니다.
+즉, <b>같은 이름의 메서드</b>와 <b>객체별 다른 실행 결과</b>가 다형성의 핵심입니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 직접 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\\n","<br>")}</p>
+<p class="explain">상세 풀이: 리스트의 객체들이 순서대로 선택되고, 각 객체의 메서드가 실행되므로 객체별 출력이 차례대로 나타납니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label><input type="radio" name="ox${i}" value="O"> O</label>
+<label><input type="radio" name="ox${i}" value="X"> X</label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label><input type="radio" name="mc${i}" value="${j+1}"> ${c}</label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll("!","").trim();
+}
+
+function grade(){
+let score=0;
+let total=15;
+let detail=[];
+let fullExplain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.shortKey));
+if(shortOk) score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답 예시: ${e.output.replaceAll("\n"," / ")} | ${shortOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 출력 서술형 풀이: ${e.output.replaceAll("\n"," / ")}가 출력된다. 이유: 반복문이 리스트 안의 객체를 순서대로 꺼내고, 각 객체의 같은 이름 메서드가 객체별로 다르게 실행되기 때문이다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk) score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk) score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let sname=document.getElementById("sname").value.trim()||"이름";
+let now=new Date();
+let displayTime=now.toLocaleString("ko-KR");
+let fileTime=now.toISOString().replaceAll(":","-").slice(0,19);
+
+let txt=`OOP 기초 다형성 평가 결과
+
+학번: ${sid}
+이름: ${sname}
+점수: ${percent}점
+정답 수: ${score}/${total}
+응시시각: ${displayTime}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${fullExplain.join("\n")}
+
+[학습 요약]
+다형성은 같은 이름의 메서드가 객체의 종류에 따라 서로 다르게 실행되는 객체지향 프로그래밍 원리이다.
+여러 객체가 같은 메서드 이름을 제공하면 반복문이나 함수에서 같은 방식으로 호출할 수 있고,
+실제 실행 결과는 각 객체의 클래스에 정의된 메서드에 따라 달라진다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${sname}_OOP다형성_${percent}점_${fileTime}.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

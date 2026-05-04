@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 캡슐화 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f0f7ff,#e0f2fe);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#075985,#2563eb);color:white;text-align:center;padding:42px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:24px;padding:26px;margin:24px 0;box-shadow:0 12px 30px rgba(30,64,175,.15)}
+h2{color:#0369a1;border-bottom:3px solid #bae6fd;padding-bottom:10px}
+h3{color:#075985}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900}
+.explain{background:#f0f9ff;border-left:7px solid #38bdf8;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #cfe8ff;border-radius:18px;padding:18px;margin:18px 0}
+label{display:block;background:#f8fafc;border:1px solid #d8e3f7;border-radius:12px;padding:9px;margin:7px 0;cursor:pointer}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:82px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#0284c7;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+button:hover{background:#0369a1}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#0369a1;margin-top:15px}
+.small{color:#64748b}
+.badge{display:inline-block;background:#e0f2fe;color:#075985;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🔐 OOP 기초: 캡슐화</h1>
+<p>출력이 있는 실생활 예제 5개 + 출력 서술형 + 서로 다른 OX + 5지선다 + 자동 채점</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번 "></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p class="small">채점 후 TXT 파일명: <b>학번_이름_OOP캡슐화_점수_응시시각.txt</b></p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념 정리</h2>
+<p>
+<span class="badge">캡슐화 Encapsulation</span>는 객체의 중요한 데이터를 외부에서 함부로 바꾸지 못하게 보호하고,
+정해진 메서드를 통해서만 안전하게 접근하도록 만드는 OOP 원리입니다.
+</p>
+<div class="explain">
+예를 들어 은행 계좌의 잔액, 학생의 점수, 비밀번호, 상품 재고처럼 중요한 값은 아무 코드에서나 직접 수정되면 위험합니다.
+그래서 파이썬에서는 관례적으로 <b>_변수</b> 또는 <b>__변수</b>를 사용하여 내부 데이터임을 표시하고,
+<b>입금하기, 점수수정하기, 비밀번호변경하기</b> 같은 메서드를 통해 안전하게 값을 바꾸도록 설계합니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🏦 은행 계좌 잔액 보호",
+concept:"잔액 balance를 __balance로 숨기고, deposit()과 withdraw() 메서드를 통해서만 안전하게 변경합니다.",
+code:`class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self.__balance = balance
+
+    def deposit(self, money):
+        if money > 0:
+            self.__balance += money
+            print(money, "원 입금 완료")
+        else:
+            print("입금액 오류")
+
+    def show_balance(self):
+        print(self.owner + "님의 잔액:", self.__balance)
+
+account = BankAccount("민수", 10000)
+account.deposit(5000)
+account.show_balance()`,
+output:"5000 원 입금 완료\n민수님의 잔액: 15000",
+shortKey:"5000 원 입금 완료 민수님의 잔액: 15000",
+oxType:"보안 판단형 OX",
+ox:"__balance는 외부에서 함부로 직접 바꾸기보다 deposit() 같은 메서드를 통해 수정하도록 설계된 값이다.",
+oxAns:"O",
+oxExp:"캡슐화는 중요한 데이터를 직접 노출하지 않고, 정해진 메서드를 통해 안전하게 변경하도록 합니다.",
+mc:"이 코드에서 캡슐화된 핵심 데이터는 무엇인가?",
+choices:["① owner","② deposit","③ __balance","④ show_balance","⑤ BankAccount"],
+mcAns:"3",
+mcExp:"__balance는 잔액을 저장하는 내부 속성으로, 외부 직접 접근을 제한하려는 의도가 담겨 있습니다."
+},
+{
+title:"📱 스마트폰 배터리 관리",
+concept:"배터리 잔량을 __battery로 보호하고, charge() 메서드가 100을 넘지 않도록 제어합니다.",
+code:`class Phone:
+    def __init__(self, battery):
+        self.__battery = battery
+
+    def charge(self, amount):
+        self.__battery += amount
+        if self.__battery > 100:
+            self.__battery = 100
+        print("배터리:", self.__battery, "%")
+
+phone = Phone(80)
+phone.charge(30)`,
+output:"배터리: 100 %",
+shortKey:"배터리: 100 %",
+oxType:"범위 제한형 OX",
+ox:"이 코드는 배터리 값이 100을 초과하지 않도록 메서드 안에서 조절한다.",
+oxAns:"O",
+oxExp:"80에 30을 더하면 110이지만, if문으로 100을 넘으면 다시 100으로 제한합니다.",
+mc:"캡슐화 관점에서 charge() 메서드의 역할로 가장 적절한 것은?",
+choices:["① 배터리 값을 아무 제한 없이 증가시킨다","② 배터리 값을 삭제한다","③ 배터리 값을 안전한 범위 안에서 변경한다","④ 클래스를 새로 정의한다","⑤ 출력 기능을 없앤다"],
+mcAns:"3",
+mcExp:"charge()는 내부 데이터 __battery를 직접 노출하지 않고 안전한 범위로 조절합니다."
+},
+{
+title:"🎮 게임 캐릭터 체력 보호",
+concept:"체력 hp를 __hp로 보호하고, damage() 메서드가 체력이 0 아래로 내려가지 않게 합니다.",
+code:`class GameCharacter:
+    def __init__(self, name, hp):
+        self.name = name
+        self.__hp = hp
+
+    def damage(self, power):
+        self.__hp -= power
+        if self.__hp < 0:
+            self.__hp = 0
+        print(self.name + "의 체력:", self.__hp)
+
+hero = GameCharacter("기사", 50)
+hero.damage(70)`,
+output:"기사의 체력: 0",
+shortKey:"기사의 체력: 0",
+oxType:"상황 적용형 OX",
+ox:"damage(70)을 실행하면 체력이 -20으로 출력되어야 한다.",
+oxAns:"X",
+oxExp:"50에서 70을 빼면 -20이지만, 코드가 0 미만이면 0으로 바꾸므로 출력은 0입니다.",
+mc:"이 코드에서 체력이 음수가 되지 않도록 막는 부분은?",
+choices:["① self.name = name","② self.__hp -= power","③ if self.__hp < 0: self.__hp = 0","④ hero = GameCharacter('기사', 50)","⑤ class GameCharacter:"],
+mcAns:"3",
+mcExp:"조건문을 통해 체력이 0보다 작아지면 다시 0으로 바꾸므로 안전한 상태를 유지합니다."
+},
+{
+title:"🛒 쇼핑몰 재고 관리",
+concept:"상품 재고를 __stock으로 보호하고, sell() 메서드에서 재고보다 많이 판매하지 못하게 합니다.",
+code:`class Product:
+    def __init__(self, name, stock):
+        self.name = name
+        self.__stock = stock
+
+    def sell(self, count):
+        if count <= self.__stock:
+            self.__stock -= count
+            print(self.name, count, "개 판매")
+        else:
+            print("재고 부족")
+
+    def show_stock(self):
+        print("남은 재고:", self.__stock)
+
+p = Product("노트", 3)
+p.sell(5)
+p.show_stock()`,
+output:"재고 부족\n남은 재고: 3",
+shortKey:"재고 부족 남은 재고: 3",
+oxType:"오류 예방형 OX",
+ox:"이 코드는 재고보다 많은 수량을 판매하려 할 때 재고를 음수로 만들지 않는다.",
+oxAns:"O",
+oxExp:"판매 수량 5가 재고 3보다 크므로 '재고 부족'을 출력하고 재고는 그대로 3입니다.",
+mc:"sell() 메서드가 하는 일로 가장 적절한 것은?",
+choices:["① 재고와 상관없이 무조건 판매한다","② 재고가 충분할 때만 재고를 줄인다","③ 상품 이름을 삭제한다","④ __stock을 항상 0으로 만든다","⑤ 객체 생성을 막는다"],
+mcAns:"2",
+mcExp:"sell()은 count <= self.__stock 조건을 확인한 뒤 재고가 충분할 때만 판매 처리합니다."
+},
+{
+title:"🔑 회원 비밀번호 변경",
+concept:"비밀번호를 __password로 보호하고, change_password() 메서드에서 기존 비밀번호가 맞을 때만 변경합니다.",
+code:`class Member:
+    def __init__(self, name, password):
+        self.name = name
+        self.__password = password
+
+    def change_password(self, old, new):
+        if old == self.__password:
+            self.__password = new
+            print("비밀번호 변경 완료")
+        else:
+            print("기존 비밀번호가 틀렸습니다")
+
+member = Member("수진", "1234")
+member.change_password("0000", "5678")`,
+output:"기존 비밀번호가 틀렸습니다",
+shortKey:"기존 비밀번호가 틀렸습니다",
+oxType:"권한 확인형 OX",
+ox:"기존 비밀번호가 틀려도 새 비밀번호로 반드시 변경된다.",
+oxAns:"X",
+oxExp:"old 값이 __password와 같을 때만 변경됩니다. 여기서는 '0000'과 '1234'가 다르므로 변경되지 않습니다.",
+mc:"이 예제에서 캡슐화가 필요한 가장 중요한 이유는?",
+choices:["① 비밀번호를 아무나 직접 바꾸지 못하게 하기 위해","② 이름을 숫자로 바꾸기 위해","③ 출력문을 없애기 위해","④ 클래스를 반복문으로 만들기 위해","⑤ 인스턴스를 만들지 않기 위해"],
+mcAns:"1",
+mcExp:"비밀번호는 민감한 정보이므로 직접 접근보다 검증 절차가 있는 메서드를 통해 변경해야 안전합니다."
+}
+];
+
+const exDiv=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+exDiv.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output.replaceAll("\\n","<br>")}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 중요한 속성을 외부에서 직접 수정하지 않고, 클래스 안의 메서드를 통해 안전하게 다루는 구조입니다.
+<b>__속성</b>은 내부 데이터임을 나타내며, 메서드는 값의 범위·조건·권한을 검사한 뒤 값을 바꿉니다.
+이처럼 데이터와 데이터를 다루는 기능을 하나로 묶고 보호하는 것이 캡슐화입니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 직접 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\\n","<br>")}</p>
+<p class="explain">상세 풀이: 객체가 생성된 뒤 메서드가 실행되고, 메서드 내부 조건문에 따라 print문 결과가 출력됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label><input type="radio" name="ox${i}" value="O"> O</label>
+<label><input type="radio" name="ox${i}" value="X"> X</label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label><input type="radio" name="mc${i}" value="${j+1}"> ${c}</label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").trim();
+}
+
+function grade(){
+let score=0;
+let total=15;
+let detail=[];
+let fullExplain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.shortKey));
+if(shortOk) score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답 예시: ${e.output.replaceAll("\n"," / ")} | ${shortOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 출력 서술형 풀이: ${e.output.replaceAll("\n"," / ")}가 출력된다. 이유: 캡슐화된 내부 속성을 메서드가 조건에 따라 안전하게 처리한 뒤 print문을 실행하기 때문이다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk) score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk) score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let sname=document.getElementById("sname").value.trim()||"이름";
+let now=new Date();
+let displayTime=now.toLocaleString("ko-KR");
+let fileTime=now.toISOString().replaceAll(":","-").slice(0,19);
+
+let txt=`OOP 기초 캡슐화 평가 결과
+
+학번: ${sid}
+이름: ${sname}
+점수: ${percent}점
+정답 수: ${score}/${total}
+응시시각: ${displayTime}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${fullExplain.join("\n")}
+
+[학습 요약]
+캡슐화는 객체의 중요한 데이터를 외부에서 함부로 바꾸지 못하게 보호하고,
+정해진 메서드를 통해서만 안전하게 접근하거나 수정하도록 만드는 객체지향 프로그래밍 원리이다.
+파이썬에서는 __속성처럼 이름을 작성하여 외부 직접 접근을 어렵게 만들고,
+메서드 안에서 조건 검사, 범위 제한, 권한 확인 등을 수행할 수 있다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${sname}_OOP캡슐화_${percent}점_${fileTime}.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

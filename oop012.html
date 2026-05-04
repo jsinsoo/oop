@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 싱글톤 패턴 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f8fafc,#e0f2fe);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#0f172a,#2563eb);color:white;text-align:center;padding:46px 24px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(15,23,42,.15)}
+h2{color:#1d4ed8;border-bottom:3px solid #bfdbfe;padding-bottom:10px}
+h3{color:#1e3a8a}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;white-space:pre-wrap;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#eff6ff;border-left:7px solid #60a5fa;padding:15px;border-radius:14px;margin:12px 0}
+.qbox{background:#fbfdff;border:1px solid #bfdbfe;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#1d4ed8;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#1d4ed8;margin-top:15px}
+.badge{display:inline-block;background:#dbeafe;color:#1e3a8a;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🔐 OOP 심화: 싱글톤 패턴</h1>
+<p>하나의 인스턴스만 공유하는 설계 패턴 실생활 예제 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번 "></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP_싱글톤 패턴_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">Singleton Pattern</span>은 프로그램 전체에서 객체가 단 하나만 만들어지도록 보장하는 디자인 패턴입니다.</p>
+<div class="explain">
+예를 들어 앱 설정, 프린터 관리자, 로그 기록기, 데이터베이스 연결 관리자처럼 여러 곳에서 같은 상태를 공유해야 하는 객체는 싱글톤 패턴으로 설계할 수 있습니다.
+파이썬에서는 주로 <b>__new__</b> 메서드나 클래스 변수를 이용해 이미 만들어진 객체를 다시 반환하도록 구현합니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+function escapeHtml(s){
+  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+function norm(s){
+  return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").replaceAll("!","").trim();
+}
+
+const examples=[
+{
+title:"⚙️ 앱 설정 관리자",
+concept:"여러 설정 객체를 만들어도 실제로는 하나의 설정 관리자 인스턴스만 공유됩니다.",
+code:`class AppConfig:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.theme = "light"
+        return cls._instance
+
+config1 = AppConfig()
+config2 = AppConfig()
+
+config1.theme = "dark"
+
+print("config1 테마:", config1.theme)
+print("config2 테마:", config2.theme)
+print("같은 객체인가?", config1 is config2)`,
+output:"config1 테마: dark\nconfig2 테마: dark\n같은 객체인가? True",
+key:"config1 테마 dark config2 테마 dark 같은 객체인가 True",
+oxType:"상태 공유형 OX",
+ox:"config1.theme을 dark로 바꾸면 config2.theme도 dark로 보인다.",
+oxAns:"O",
+oxExp:"config1과 config2는 같은 싱글톤 객체를 가리키므로 내부 상태 theme을 공유합니다.",
+mc:"config1 is config2의 결과는?",
+choices:["① True","② False","③ None","④ 오류","⑤ 문자열 dark"],
+mcAns:"1",
+mcExp:"싱글톤 패턴으로 같은 인스턴스를 반환하므로 is 비교 결과는 True입니다."
+},
+{
+title:"🖨️ 프린터 관리자",
+concept:"프린터 큐를 관리하는 객체가 여러 개 만들어져도 실제 출력 대기 목록은 하나로 공유됩니다.",
+code:`class PrinterManager:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.jobs = []
+        return cls._instance
+
+p1 = PrinterManager()
+p2 = PrinterManager()
+
+p1.jobs.append("보고서.pdf")
+p2.jobs.append("사진.png")
+
+print("대기 문서 수:", len(p1.jobs))
+print("대기 목록:", p2.jobs)
+print("같은 관리자:", p1 is p2)`,
+output:"대기 문서 수: 2\n대기 목록: ['보고서.pdf', '사진.png']\n같은 관리자: True",
+key:"대기 문서 수 2 대기 목록 ['보고서.pdf','사진.png'] 같은 관리자 True",
+oxType:"큐 공유 판단형 OX",
+ox:"p1.jobs와 p2.jobs는 같은 리스트를 공유하므로 문서가 2개가 된다.",
+oxAns:"O",
+oxExp:"p1과 p2가 같은 객체이기 때문에 jobs 리스트도 하나만 존재합니다.",
+mc:"프린터 관리자에 싱글톤을 쓰기 적절한 이유는?",
+choices:["① 여러 프린터 대기열이 서로 충돌하지 않도록 하나의 관리자 상태를 공유하기 위해","② 리스트를 사용할 수 없게 하기 위해","③ 객체 생성을 영원히 금지하기 위해","④ print문을 삭제하기 위해","⑤ 문자열만 저장하기 위해"],
+mcAns:"1",
+mcExp:"프린터 작업 큐는 하나의 공통 관리자에서 일관되게 관리하는 것이 적절합니다."
+},
+{
+title:"🧾 로그 기록기",
+concept:"프로그램 여러 부분에서 로그 기록기를 호출해도 하나의 기록 목록에 로그가 쌓입니다.",
+code:`class Logger:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.logs = []
+        return cls._instance
+
+log1 = Logger()
+log2 = Logger()
+
+log1.logs.append("로그인 성공")
+log2.logs.append("파일 저장")
+
+print("로그 개수:", len(log1.logs))
+print("마지막 로그:", log2.logs[-1])
+print("같은 로거:", log1 is log2)`,
+output:"로그 개수: 2\n마지막 로그: 파일 저장\n같은 로거: True",
+key:"로그 개수 2 마지막 로그 파일 저장 같은 로거 True",
+oxType:"기록 누적형 OX",
+ox:"log1과 log2가 서로 다른 객체라면 logs는 각각 따로 관리되어야 하지만, 이 예제에서는 하나로 공유된다.",
+oxAns:"O",
+oxExp:"싱글톤 구현으로 log1과 log2는 같은 객체이며 logs 리스트도 함께 사용합니다.",
+mc:"log2.logs[-1]이 출력하는 값은?",
+choices:["① 로그인 성공","② 파일 저장","③ 2","④ True","⑤ Logger"],
+mcAns:"2",
+mcExp:"두 번째로 추가된 로그가 '파일 저장'이므로 마지막 원소는 파일 저장입니다."
+},
+{
+title:"🎮 게임 사운드 설정",
+concept:"게임 전체에서 사운드 볼륨 설정 객체를 하나만 사용하여 어디서 바꿔도 같은 볼륨이 유지됩니다.",
+code:`class SoundSetting:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.volume = 50
+        return cls._instance
+
+menu_sound = SoundSetting()
+battle_sound = SoundSetting()
+
+menu_sound.volume = 80
+
+print("메뉴 볼륨:", menu_sound.volume)
+print("전투 볼륨:", battle_sound.volume)
+print("동일 설정:", menu_sound is battle_sound)`,
+output:"메뉴 볼륨: 80\n전투 볼륨: 80\n동일 설정: True",
+key:"메뉴 볼륨 80 전투 볼륨 80 동일 설정 True",
+oxType:"게임 설정 적용형 OX",
+ox:"menu_sound와 battle_sound는 같은 설정 객체이므로 volume 값을 공유한다.",
+oxAns:"O",
+oxExp:"두 변수는 같은 싱글톤 인스턴스를 참조하므로 volume 변경이 함께 반영됩니다.",
+mc:"싱글톤 패턴의 핵심 설명으로 가장 적절한 것은?",
+choices:["① 객체를 여러 개 만들되 서로 완전히 독립시킨다","② 하나의 인스턴스를 공유하게 한다","③ 상속을 금지한다","④ 반복문을 자동 실행한다","⑤ 모든 속성을 삭제한다"],
+mcAns:"2",
+mcExp:"싱글톤은 하나의 인스턴스를 공유하도록 만드는 패턴입니다."
+},
+{
+title:"🗄️ 데이터베이스 연결 관리자",
+concept:"데이터베이스 연결 객체를 여러 번 요청해도 실제 연결 관리자는 하나만 만들어집니다.",
+code:`class Database:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.connected = False
+        return cls._instance
+
+    def connect(self):
+        self.connected = True
+        print("DB 연결 완료")
+
+db1 = Database()
+db2 = Database()
+
+db1.connect()
+
+print("db1 연결:", db1.connected)
+print("db2 연결:", db2.connected)
+print("같은 연결 관리자:", db1 is db2)`,
+output:"DB 연결 완료\ndb1 연결: True\ndb2 연결: True\n같은 연결 관리자: True",
+key:"DB 연결 완료 db1 연결 True db2 연결 True 같은 연결 관리자 True",
+oxType:"연결 상태 공유형 OX",
+ox:"db1.connect()를 실행하면 db2.connected도 True로 보인다.",
+oxAns:"O",
+oxExp:"db1과 db2는 같은 객체이므로 connected 상태를 공유합니다.",
+mc:"이 코드에서 __new__의 역할로 가장 적절한 것은?",
+choices:["① 객체 생성을 제어하여 기존 인스턴스를 반환한다","② 문자열을 출력한다","③ 리스트 길이를 계산한다","④ 객체를 삭제한다","⑤ connect 메서드를 금지한다"],
+mcAns:"1",
+mcExp:"__new__는 객체가 만들어지기 전에 호출되며, 싱글톤에서는 기존 인스턴스를 반환하도록 제어합니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+  const box=document.createElement("div");
+  box.className="qbox";
+  box.innerHTML=`
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${escapeHtml(e.output)}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 <b>_instance</b> 클래스 변수와 <b>__new__</b> 메서드를 이용해 객체 생성을 제어합니다.
+처음 객체를 만들 때만 실제 인스턴스를 생성하고, 그 다음부터는 이미 만들어진 같은 인스턴스를 반환합니다.
+따라서 서로 다른 변수 이름을 사용해도 내부 상태는 하나로 공유됩니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${escapeHtml(e.output).replaceAll("\n","<br>")}</p>
+<p class="explain">상세 풀이: 두 변수가 같은 싱글톤 객체를 참조하므로 한쪽에서 변경한 값이 다른 쪽에서도 확인됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+`;
+  area.appendChild(box);
+});
+
+function grade(){
+  let score=0,total=15;
+  let detail=[], explain=[];
+
+  examples.forEach((e,i)=>{
+    let short=document.getElementById("short"+i).value.trim();
+    let shortOk=norm(short).includes(norm(e.key));
+    if(shortOk)score++;
+
+    detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short || "미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 출력 풀이: ${e.output.replaceAll("\n"," / ")}가 출력됩니다. 두 변수가 같은 싱글톤 인스턴스를 참조하기 때문입니다.`);
+
+    let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+    let oxVal=ox ? ox.value : "미응답";
+    let oxOk=oxVal===e.oxAns;
+    if(oxOk)score++;
+
+    detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+    let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+    let mcVal=mc ? mc.value : "미응답";
+    let mcOk=mcVal===e.mcAns;
+    if(mcOk)score++;
+
+    detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+  });
+
+  let percent=Math.round(score/total*100);
+  document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+  let sid=document.getElementById("sid").value.trim() || "학번";
+  let name=document.getElementById("sname").value.trim() || "이름";
+
+  let txt=`OOP 심화 싱글톤 패턴 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+싱글톤 패턴은 프로그램에서 하나의 인스턴스만 생성되도록 보장하는 디자인 패턴이다.
+파이썬에서는 __new__와 클래스 변수 _instance를 활용해 기존 인스턴스를 재사용하도록 만들 수 있다.
+설정 관리자, 로그 기록기, 프린터 관리자, 데이터베이스 연결 관리자처럼 공유 상태가 필요한 객체에 자주 사용된다.
+`;
+
+  let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`${sid}_${name}_OOP_싱글톤 패턴_${percent}점.txt`;
+  a.click();
+}
+</script>
+
+</body>
+</html>

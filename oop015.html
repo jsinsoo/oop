@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP __slots__ 최적화 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f0fdf4,#eff6ff);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#15803d,#2563eb);color:white;text-align:center;padding:46px 24px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(30,64,175,.16)}
+h2{color:#15803d;border-bottom:3px solid #bbf7d0;padding-bottom:10px}
+h3{color:#166534}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;white-space:pre-wrap;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#f0fdf4;border-left:7px solid #22c55e;padding:15px;border-radius:14px;margin:12px 0}
+.qbox{background:#fbfdff;border:1px solid #bbf7d0;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#15803d;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#15803d;margin-top:15px}
+.badge{display:inline-block;background:#dcfce7;color:#166534;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>⚡ OOP 심화: __slots__를 이용한 최적화</h1>
+<p>메모리 절약 · 속성 제한 · 대량 객체 최적화 실생활 예제 평가</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="예: 10101"></div>
+<div>이름 <input id="sname" type="text" placeholder="예: 홍길동"></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP___slots__최적화_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">__slots__</span>는 객체가 가질 수 있는 속성을 미리 제한하여 메모리 사용을 줄이고, 잘못된 속성 추가를 막는 OOP 최적화 기법입니다.</p>
+<div class="explain">
+일반 객체는 보통 <b>__dict__</b>에 속성을 저장하기 때문에 자유롭게 새 속성을 추가할 수 있습니다.
+반면 <b>__slots__ = ("속성1", "속성2")</b>를 사용하면 지정된 속성만 사용할 수 있어 대량의 객체를 만들 때 메모리 절약에 유리합니다.
+단, 유연성은 줄어들기 때문에 학생 수, 좌표, 센서 데이터처럼 속성 구조가 고정된 객체에 적합합니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+function escapeHtml(s){
+  return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+function norm(s){
+  return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").replaceAll("!","").trim();
+}
+
+const examples=[
+{
+title:"📍 배달 위치 좌표 객체",
+concept:"배달 앱에서 수많은 위치 좌표 객체를 만들 때 x, y 속성만 필요하므로 __slots__로 속성을 제한합니다.",
+code:`class Location:
+    __slots__ = ("x", "y")
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+p = Location(37.5, 127.0)
+
+print("위도:", p.x)
+print("경도:", p.y)
+print("속성 제한:", Location.__slots__)`,
+output:"위도: 37.5\n경도: 127.0\n속성 제한: ('x', 'y')",
+key:"위도 37.5 경도 127.0 속성 제한 ('x','y')",
+oxType:"속성 제한형 OX",
+ox:"Location 객체는 __slots__에 지정된 x와 y 속성을 사용하도록 설계되었다.",
+oxAns:"O",
+oxExp:"__slots__ = ('x', 'y')로 지정했으므로 Location 객체는 x, y 중심으로 속성이 제한됩니다.",
+mc:"이 예제에서 __slots__를 사용하는 가장 적절한 이유는?",
+choices:["① 좌표 객체가 많은 상황에서 필요한 속성만 사용하도록 제한하기 위해","② x와 y를 문자열로 바꾸기 위해","③ 객체 생성을 금지하기 위해","④ print를 자동 삭제하기 위해","⑤ 상속을 반드시 막기 위해"],
+mcAns:"1",
+mcExp:"위치 좌표처럼 구조가 단순하고 객체 수가 많을 때 __slots__는 메모리 절약에 도움이 됩니다."
+},
+{
+title:"👨‍🎓 학생 명부 객체",
+concept:"학생 객체에서 학번, 이름, 점수만 저장하도록 제한하여 실수로 다른 속성을 추가하는 일을 막습니다.",
+code:`class Student:
+    __slots__ = ("sid", "name", "score")
+
+    def __init__(self, sid, name, score):
+        self.sid = sid
+        self.name = name
+        self.score = score
+
+s = Student("10101", "민수", 95)
+
+print("학번:", s.sid)
+print("이름:", s.name)
+print("점수:", s.score)`,
+output:"학번: 10101\n이름: 민수\n점수: 95",
+key:"학번 10101 이름 민수 점수 95",
+oxType:"자료 구조 고정형 OX",
+ox:"학생 객체가 항상 sid, name, score만 갖도록 고정하려면 __slots__가 도움이 된다.",
+oxAns:"O",
+oxExp:"__slots__는 객체가 사용할 속성 목록을 제한하므로 정해진 데이터 구조를 유지하는 데 유용합니다.",
+mc:"Student.__slots__에 들어 있는 속성이 아닌 것은?",
+choices:["① sid","② name","③ score","④ grade","⑤ 모두 속성 후보"],
+mcAns:"4",
+mcExp:"Student.__slots__는 sid, name, score만 포함하므로 grade는 포함되지 않습니다."
+},
+{
+title:"🌡️ IoT 센서 측정값",
+concept:"센서 데이터는 time, temperature만 반복 저장되므로 __slots__로 가볍게 객체를 만듭니다.",
+code:`class SensorData:
+    __slots__ = ("time", "temperature")
+
+    def __init__(self, time, temperature):
+        self.time = time
+        self.temperature = temperature
+
+d = SensorData("10:00", 26.5)
+
+print("측정 시각:", d.time)
+print("온도:", d.temperature)
+print("데이터 타입:", type(d).__name__)`,
+output:"측정 시각: 10:00\n온도: 26.5\n데이터 타입: SensorData",
+key:"측정 시각 10:00 온도 26.5 데이터 타입 SensorData",
+oxType:"대량 데이터 최적화형 OX",
+ox:"센서 데이터처럼 같은 구조의 객체를 많이 만들 때 __slots__는 메모리 최적화에 도움이 될 수 있다.",
+oxAns:"O",
+oxExp:"__slots__는 객체별 __dict__ 사용을 줄여 대량 객체 생성 시 메모리 사용량 감소에 유리합니다.",
+mc:"이 코드에서 객체의 클래스 이름을 출력하는 표현은?",
+choices:["① d.time","② d.temperature","③ type(d).__name__","④ SensorData.__slots__","⑤ __init__"],
+mcAns:"3",
+mcExp:"type(d).__name__은 객체 d의 클래스 이름인 SensorData를 문자열로 반환합니다."
+},
+{
+title:"🛒 쇼핑몰 상품 정보",
+concept:"상품 객체가 이름과 가격만 가지도록 제한하여 잘못된 속성 추가를 방지합니다.",
+code:`class Product:
+    __slots__ = ("name", "price")
+
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+item = Product("키보드", 35000)
+
+print("상품명:", item.name)
+print("가격:", item.price)
+print("할인가:", int(item.price * 0.9))`,
+output:"상품명: 키보드\n가격: 35000\n할인가: 31500",
+key:"상품명 키보드 가격 35000 할인가 31500",
+oxType:"계산 응용형 OX",
+ox:"item.price는 __slots__에 포함된 속성이므로 정상적으로 저장되고 할인 계산에도 사용할 수 있다.",
+oxAns:"O",
+oxExp:"price는 Product.__slots__에 포함되어 있으므로 item.price로 접근할 수 있고, 수치 계산에도 사용할 수 있습니다.",
+mc:"할인가 31500이 나오는 계산식은?",
+choices:["① 35000 + 0.9","② 35000 * 0.9","③ 35000 / 0.9","④ 35000 - 0.9","⑤ 35000 * 9"],
+mcAns:"2",
+mcExp:"35000의 90%는 35000 × 0.9 = 31500입니다."
+},
+{
+title:"🎮 게임 캐릭터 상태",
+concept:"게임 캐릭터가 name, hp, level만 가지도록 하여 대량 캐릭터 객체의 속성을 고정합니다.",
+code:`class Character:
+    __slots__ = ("name", "hp", "level")
+
+    def __init__(self, name, hp, level):
+        self.name = name
+        self.hp = hp
+        self.level = level
+
+hero = Character("기사", 100, 3)
+
+print("이름:", hero.name)
+print("체력:", hero.hp)
+print("레벨:", hero.level)`,
+output:"이름: 기사\n체력: 100\n레벨: 3",
+key:"이름 기사 체력 100 레벨 3",
+oxType:"게임 객체 설계형 OX",
+ox:"Character 객체는 name, hp, level처럼 고정된 상태 정보를 저장하는 데 __slots__를 사용할 수 있다.",
+oxAns:"O",
+oxExp:"게임 캐릭터처럼 정해진 속성 구조를 가진 객체는 __slots__를 통해 속성을 명확히 제한할 수 있습니다.",
+mc:"__slots__를 사용할 때 주의할 점으로 가장 적절한 것은?",
+choices:["① 지정하지 않은 새 속성 추가가 제한될 수 있다","② 반드시 모든 값을 문자열로 저장해야 한다","③ 객체를 절대 생성할 수 없다","④ print가 작동하지 않는다","⑤ 클래스 이름을 사용할 수 없다"],
+mcAns:"1",
+mcExp:"__slots__를 사용하면 지정된 속성 외의 새 속성 추가가 제한될 수 있으므로 유연성은 줄어듭니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+  const box=document.createElement("div");
+  box.className="qbox";
+  box.innerHTML=`
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${escapeHtml(e.output)}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 <b>__slots__</b>를 사용하여 객체가 가질 수 있는 속성 목록을 미리 정합니다.
+속성 구조가 고정된 객체를 많이 만들 때 메모리 사용을 줄일 수 있고, 실수로 잘못된 속성을 추가하는 문제도 줄일 수 있습니다.
+다만 자유롭게 새 속성을 붙이는 방식은 제한될 수 있으므로, 고정 구조 데이터에 적합합니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${escapeHtml(e.output).replaceAll("\n","<br>")}</p>
+<p class="explain">상세 풀이: __slots__에 등록된 속성에 값이 저장되고, print문이 코드 순서대로 실행됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+`;
+  area.appendChild(box);
+});
+
+function grade(){
+  let score=0,total=15;
+  let detail=[], explain=[];
+
+  examples.forEach((e,i)=>{
+    let short=document.getElementById("short"+i).value.trim();
+    let shortOk=norm(short).includes(norm(e.key));
+    if(shortOk)score++;
+
+    detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short || "미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 출력 풀이: ${e.output.replaceAll("\n"," / ")}가 출력됩니다. __slots__로 제한된 속성에 값이 저장된 뒤 print문이 순서대로 실행되기 때문입니다.`);
+
+    let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+    let oxVal=ox ? ox.value : "미응답";
+    let oxOk=oxVal===e.oxAns;
+    if(oxOk)score++;
+
+    detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+    let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+    let mcVal=mc ? mc.value : "미응답";
+    let mcOk=mcVal===e.mcAns;
+    if(mcOk)score++;
+
+    detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk ? "정답" : "오답"}`);
+    explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+  });
+
+  let percent=Math.round(score/total*100);
+  document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+  let sid=document.getElementById("sid").value.trim() || "학번";
+  let name=document.getElementById("sname").value.trim() || "이름";
+
+  let txt=`OOP 심화 __slots__ 최적화 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+__slots__는 객체가 사용할 속성 이름을 미리 제한하는 클래스 변수이다.
+일반 객체의 __dict__ 사용을 줄여 대량 객체 생성 시 메모리 절약에 도움이 될 수 있다.
+지정된 속성 외의 새 속성 추가가 제한될 수 있으므로, 속성 구조가 고정된 객체에 적합하다.
+`;
+
+  let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`${sid}_${name}_OOP___slots__최적화_${percent}점.txt`;
+  a.click();
+}
+</script>
+
+</body>
+</html>

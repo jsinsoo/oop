@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 응용 정적/클래스 메서드 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#f0f9ff,#eef2ff);color:#172033;line-height:1.75}
+header{background:linear-gradient(135deg,#4338ca,#0ea5e9);color:white;text-align:center;padding:46px 24px}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:26px;padding:28px;margin:24px 0;box-shadow:0 12px 32px rgba(30,64,175,.16)}
+h2{color:#4338ca;border-bottom:3px solid #c7d2fe;padding-bottom:10px}
+h3{color:#3730a3}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900;white-space:pre-line}
+.explain{background:#eef2ff;border-left:7px solid #6366f1;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #c7d2fe;border-radius:20px;padding:20px;margin:20px 0}
+.choice{display:flex;align-items:flex-start;gap:10px;background:#f8fafc;border:1px solid #dbe4f0;border-radius:13px;padding:10px;margin:8px 0;cursor:pointer}
+.choice input{margin-top:6px;flex:0 0 auto}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:90px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#4338ca;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#4338ca;margin-top:15px}
+.badge{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:999px;padding:5px 12px;font-weight:900}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🧩 OOP 응용: 정적 메서드 / 클래스 메서드</h1>
+<p>@staticmethod · @classmethod 실생활 예제 + 출력 예측 + 자동 채점</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="학번 "></div>
+<div>이름 <input id="sname" type="text" placeholder="이름 "></div>
+</div>
+<p>채점 후 <b>학번_이름_OOP메서드_점수.txt</b> 파일이 생성됩니다.</p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념</h2>
+<p><span class="badge">@staticmethod</span>는 객체 상태나 클래스 상태를 사용하지 않고, 클래스 안에 관련 기능을 묶어 둘 때 사용합니다.</p>
+<p><span class="badge">@classmethod</span>는 첫 번째 인자로 <b>cls</b>를 받아 클래스 변수나 클래스 자체를 다룰 때 사용합니다.</p>
+<div class="explain">
+비유하면 정적 메서드는 “계산기 기능”처럼 독립적인 도구이고, 클래스 메서드는 “학교 전체 학생 수 관리”처럼 클래스 전체의 공통 정보를 다루는 기능입니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🏪 편의점 할인 계산기",
+concept:"정적 메서드 discount_price()는 상품 객체의 상태 없이 원가와 할인율만으로 할인 가격을 계산합니다.",
+code:`class ConvenienceStore:
+    store_name = "파이썬 편의점"
+
+    @staticmethod
+    def discount_price(price, rate):
+        return int(price * (1 - rate))
+
+    @classmethod
+    def show_store(cls):
+        print("가게명:", cls.store_name)
+
+ConvenienceStore.show_store()
+print("할인가:", ConvenienceStore.discount_price(2000, 0.1), "원")`,
+output:"가게명: 파이썬 편의점\n할인가: 1800 원",
+key:"가게명: 파이썬 편의점 할인가: 1800 원",
+oxType:"역할 구분형 OX",
+ox:"discount_price()는 price와 rate만으로 계산하므로 인스턴스의 개별 속성 없이도 사용할 수 있다.",
+oxAns:"O",
+oxExp:"@staticmethod는 self나 cls를 받지 않아도 되며, 독립적인 계산 기능을 클래스 안에 묶어 둘 때 적합합니다.",
+mc:"이 코드에서 클래스 변수 store_name에 접근하는 메서드는?",
+choices:["① discount_price","② show_store","③ print","④ int","⑤ ConvenienceStore()"],
+mcAns:"2",
+mcExp:"show_store(cls)는 cls.store_name을 통해 클래스 변수에 접근하므로 클래스 메서드입니다."
+},
+{
+title:"🏫 학교 학생 수 관리",
+concept:"클래스 메서드 add_student()는 Student.total이라는 클래스 변수를 증가시켜 전체 학생 수를 관리합니다.",
+code:`class Student:
+    total = 0
+
+    def __init__(self, name):
+        self.name = name
+        Student.add_student()
+
+    @classmethod
+    def add_student(cls):
+        cls.total += 1
+
+    @classmethod
+    def show_total(cls):
+        print("전체 학생 수:", cls.total)
+
+s1 = Student("민수")
+s2 = Student("지아")
+Student.show_total()
+print("최근 생성 학생:", s2.name)`,
+output:"전체 학생 수: 2\n최근 생성 학생: 지아",
+key:"전체 학생 수: 2 최근 생성 학생: 지아",
+oxType:"클래스 변수 추론형 OX",
+ox:"Student 객체가 2개 생성되었기 때문에 클래스 변수 total은 2가 된다.",
+oxAns:"O",
+oxExp:"생성자에서 Student.add_student()가 실행되고, 객체가 두 번 생성되어 total이 0에서 2로 증가합니다.",
+mc:"total처럼 모든 Student 객체가 함께 공유하는 값은?",
+choices:["① 지역 변수","② 클래스 변수","③ 매개변수","④ 문자열 메서드","⑤ 반복 변수"],
+mcAns:"2",
+mcExp:"total은 클래스 내부에 직접 선언된 변수로, 모든 Student 객체가 공유하는 클래스 변수입니다."
+},
+{
+title:"🍕 피자 주문 총액 계산",
+concept:"정적 메서드는 주문 수량과 단가만 받아 총액을 계산하고, 클래스 메서드는 브랜드명을 출력합니다.",
+code:`class PizzaShop:
+    brand = "코딩 피자"
+
+    @staticmethod
+    def total_price(count, price):
+        return count * price
+
+    @classmethod
+    def introduce(cls):
+        print("브랜드:", cls.brand)
+
+PizzaShop.introduce()
+print("총 주문 금액:", PizzaShop.total_price(3, 12000), "원")`,
+output:"브랜드: 코딩 피자\n총 주문 금액: 36000 원",
+key:"브랜드: 코딩 피자 총 주문 금액: 36000 원",
+oxType:"계산 적용형 OX",
+ox:"PizzaShop.total_price(3, 12000)의 결과는 36000이다.",
+oxAns:"O",
+oxExp:"수량 3과 단가 12000을 곱하면 36000입니다.",
+mc:"total_price()를 staticmethod로 만든 이유로 가장 적절한 것은?",
+choices:["① self의 개별 속성이 꼭 필요하기 때문","② cls의 클래스 변수를 반드시 수정하기 때문","③ 수량과 단가만 있으면 독립적으로 계산 가능하기 때문","④ 객체를 삭제하기 위해","⑤ 상속을 금지하기 위해"],
+mcAns:"3",
+mcExp:"총액 계산은 전달받은 count와 price만 사용하므로 정적 메서드로 만들기 적절합니다."
+},
+{
+title:"🏦 은행 이자율 정책",
+concept:"클래스 메서드는 모든 계좌가 공유하는 이자율을 변경하고, 정적 메서드는 예금 이자를 계산합니다.",
+code:`class BankAccount:
+    interest_rate = 0.03
+
+    @classmethod
+    def change_rate(cls, new_rate):
+        cls.interest_rate = new_rate
+        print("이자율 변경:", cls.interest_rate)
+
+    @staticmethod
+    def calc_interest(money, rate):
+        return int(money * rate)
+
+BankAccount.change_rate(0.05)
+print("예상 이자:", BankAccount.calc_interest(100000, BankAccount.interest_rate), "원")`,
+output:"이자율 변경: 0.05\n예상 이자: 5000 원",
+key:"이자율 변경: 0.05 예상 이자: 5000 원",
+oxType:"정책 변경형 OX",
+ox:"change_rate()는 cls.interest_rate를 수정하므로 클래스 전체의 이자율 정책을 바꾸는 역할을 한다.",
+oxAns:"O",
+oxExp:"cls.interest_rate 값을 바꾸면 BankAccount 클래스가 공유하는 이자율이 변경됩니다.",
+mc:"calc_interest(100000, 0.05)의 계산 결과는?",
+choices:["① 50","② 500","③ 5000","④ 50000","⑤ 105000"],
+mcAns:"3",
+mcExp:"100000 × 0.05 = 5000이므로 예상 이자는 5000원입니다."
+},
+{
+title:"🚗 자동차 공장 생산 번호",
+concept:"클래스 메서드 create()는 클래스 변수 count를 증가시키고 새 자동차 객체를 만들어 반환합니다.",
+code:`class Car:
+    count = 0
+
+    def __init__(self, model):
+        self.model = model
+
+    @classmethod
+    def create(cls, model):
+        cls.count += 1
+        print("생산 번호:", cls.count)
+        return cls(model)
+
+    @staticmethod
+    def check_speed(speed):
+        return speed <= 100
+
+car = Car.create("전기차")
+print("모델:", car.model)
+print("안전 속도:", Car.check_speed(90))`,
+output:"생산 번호: 1\n모델: 전기차\n안전 속도: True",
+key:"생산 번호: 1 모델: 전기차 안전 속도: True",
+oxType:"객체 생성형 OX",
+ox:"create()는 cls(model)을 반환하므로 Car 객체를 생성하는 클래스 메서드로 볼 수 있다.",
+oxAns:"O",
+oxExp:"cls(model)은 현재 클래스의 객체를 생성합니다. 따라서 create()는 객체 생성용 팩토리 메서드 역할을 합니다.",
+mc:"check_speed(90)이 True를 반환하는 이유는?",
+choices:["① 90이 100 이하이기 때문","② 90이 문자열이기 때문","③ count가 1이기 때문","④ model이 전기차이기 때문","⑤ cls가 없기 때문"],
+mcAns:"1",
+mcExp:"check_speed는 speed <= 100을 반환하므로 90은 100 이하라 True입니다."
+}
+];
+
+const area=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+area.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+이 예제는 <b>@staticmethod</b>와 <b>@classmethod</b>의 역할 차이를 보여 줍니다.
+정적 메서드는 주어진 값만으로 독립적인 기능을 수행하고,
+클래스 메서드는 <b>cls</b>를 통해 클래스 변수나 클래스 자체를 다룹니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 순서대로 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 입력하세요."></textarea>
+<p class="answer">정답 예시:<br>${e.output.replaceAll("\\n","<br>")}</p>
+<p class="explain">상세 풀이: 클래스 메서드 출력과 정적 메서드 계산 결과가 코드 순서대로 출력됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label class="choice"><input type="radio" name="ox${i}" value="O"><span>O</span></label>
+<label class="choice"><input type="radio" name="ox${i}" value="X"><span>X</span></label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label class="choice"><input type="radio" name="mc${i}" value="${j+1}"><span>${c}</span></label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll("\n","").replaceAll(".","").replaceAll(":","").trim();
+}
+
+function grade(){
+let score=0,total=15;
+let detail=[], explain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.key));
+if(shortOk)score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답: ${e.output.replaceAll("\n"," / ")} | ${shortOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} 출력 풀이: 코드 실행 순서에 따라 ${e.output.replaceAll("\n"," / ")}가 출력된다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk)score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk)score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+explain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let name=document.getElementById("sname").value.trim()||"이름";
+
+let txt=`OOP 응용 정적/클래스 메서드 평가 결과
+
+학번: ${sid}
+이름: ${name}
+점수: ${percent}점
+정답 수: ${score}/${total}
+
+[문항별 결과]
+${detail.join("\n")}
+
+[상세풀이]
+${explain.join("\n")}
+
+[핵심 요약]
+정적 메서드 @staticmethod는 self나 cls 없이 독립적인 기능을 클래스 안에 묶어 둘 때 사용한다.
+클래스 메서드 @classmethod는 cls를 받아 클래스 변수나 클래스 자체를 다룰 때 사용한다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${name}_OOP메서드_${percent}점.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>

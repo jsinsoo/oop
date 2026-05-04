@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OOP 클래스와 인스턴스 학습 평가</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:'Malgun Gothic',Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#dbeafe);color:#172033;line-height:1.7}
+header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:white;padding:42px;text-align:center}
+header h1{margin:0;font-size:34px}
+.wrap{max-width:1200px;margin:auto;padding:24px}
+.card{background:white;border-radius:24px;padding:26px;margin:24px 0;box-shadow:0 12px 30px rgba(30,64,175,.15)}
+h2{color:#1d4ed8;border-bottom:3px solid #dbeafe;padding-bottom:10px}
+h3{color:#17439b}
+pre{background:#0f172a;color:#f8fafc;padding:18px;border-radius:16px;overflow:auto;font-size:15px}
+.output{background:#ecfdf5;border-left:7px solid #10b981;padding:15px;border-radius:14px;font-weight:900}
+.explain{background:#f1f7ff;border-left:7px solid #60a5fa;padding:15px;border-radius:14px}
+.qbox{background:#fbfdff;border:1px solid #dbe7ff;border-radius:18px;padding:18px;margin:16px 0}
+label{display:block;background:#f8fafc;border:1px solid #d8e3f7;border-radius:12px;padding:9px;margin:7px 0;cursor:pointer}
+textarea,input[type=text]{width:100%;padding:12px;border:1px solid #b9c8df;border-radius:12px;font-size:16px}
+textarea{height:82px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+button{background:#2563eb;color:white;border:0;border-radius:14px;padding:14px 22px;font-size:17px;font-weight:900;cursor:pointer}
+button:hover{background:#1e40af}
+.answer{color:#087f5b;font-weight:900}
+.result{font-size:24px;font-weight:900;color:#1d4ed8;margin-top:15px}
+.small{color:#64748b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>💻 OOP 기초: 클래스와 인스턴스</h1>
+<p>출력이 있는 실생활 예제 5개 + 서술형 + 서로 다른 형식의 OX + 5지선다 + 자동 채점</p>
+</header>
+
+<div class="wrap">
+
+<section class="card">
+<h2>👤 학생 정보</h2>
+<div class="grid">
+<div>학번 <input id="sid" type="text" placeholder="이름 "></div>
+<div>이름 <input id="sname" type="text" placeholder="학번 "></div>
+</div>
+<p class="small">채점 후 TXT 파일명: <b>학번_이름_OOP클래스_점수_응시시각.txt</b></p>
+</section>
+
+<section class="card">
+<h2>1. 핵심 개념 정리</h2>
+<p>
+<b>클래스</b>는 객체를 만들기 위한 설계도입니다.  
+<b>인스턴스</b>는 클래스를 이용해 실제로 만들어진 객체입니다.
+</p>
+<div class="explain">
+예를 들어 <b>자동차 설계도</b>가 클래스라면, 실제 도로 위를 달리는 <b>현대차, 기아차, 택시</b>는 인스턴스입니다.
+클래스 안에는 객체가 가질 <b>속성</b>과 객체가 할 수 있는 <b>기능</b>을 정의할 수 있습니다.
+</div>
+</section>
+
+<section class="card">
+<h2>2. 실생활 예제 코드 5개와 평가</h2>
+<div id="examples"></div>
+</section>
+
+<section class="card">
+<h2>3. 채점 및 결과 저장</h2>
+<button onclick="grade()">채점 및 TXT 저장</button>
+<div id="result" class="result"></div>
+</section>
+
+</div>
+
+<script>
+const examples=[
+{
+title:"🚗 자동차 주행",
+concept:"자동차를 클래스로 만들고, 브랜드 이름을 속성으로 저장한 뒤 drive() 메서드로 출력합니다.",
+code:`class Car:
+    def __init__(self, brand):
+        self.brand = brand
+
+    def drive(self):
+        print(self.brand + " 자동차가 달립니다.")
+
+car1 = Car("현대")
+car1.drive()`,
+output:"현대 자동차가 달립니다.",
+shortKey:"현대 자동차가 달립니다",
+oxType:"판단형 OX",
+ox:"car1은 Car 클래스로부터 만들어진 인스턴스이다.",
+oxAns:"O",
+oxExp:"car1 = Car('현대')에서 Car 클래스를 호출하여 car1이라는 인스턴스를 생성했습니다.",
+mc:"다음 중 이 코드에서 클래스 이름은 무엇인가?",
+choices:["① car1","② brand","③ Car","④ drive()","⑤ self.brand"],
+mcAns:"3",
+mcExp:"class Car: 라고 정의했으므로 클래스 이름은 Car입니다."
+},
+{
+title:"📚 학생 자기소개",
+concept:"학생 이름과 학년을 속성으로 저장하고 introduce() 메서드가 자기소개 문장을 출력합니다.",
+code:`class Student:
+    def __init__(self, name, grade):
+        self.name = name
+        self.grade = grade
+
+    def introduce(self):
+        print(self.grade, "학년", self.name, "입니다.")
+
+s1 = Student("민수", 2)
+s1.introduce()`,
+output:"2 학년 민수 입니다.",
+shortKey:"2 학년 민수 입니다",
+oxType:"빈칸 판단형 OX",
+ox:"Student('민수', 2)를 실행하면 __init__ 메서드가 자동으로 실행되어 name과 grade가 저장된다.",
+oxAns:"O",
+oxExp:"생성자 __init__은 인스턴스가 만들어질 때 자동 실행되어 초기 속성값을 저장합니다.",
+mc:"s1.introduce()를 호출했을 때 실행되는 것은?",
+choices:["① __init__ 메서드만 다시 실행된다","② introduce 메서드가 실행된다","③ 클래스가 삭제된다","④ name 값이 사라진다","⑤ grade가 문자열로 바뀐다"],
+mcAns:"2",
+mcExp:"점 표기법 s1.introduce()는 s1 인스턴스의 introduce 메서드를 호출합니다."
+},
+{
+title:"🏦 은행 계좌 입금",
+concept:"계좌 주인과 잔액을 속성으로 저장하고, deposit() 메서드로 잔액을 증가시킨 뒤 출력합니다.",
+code:`class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, money):
+        self.balance += money
+        print(self.owner + "님의 잔액:", self.balance)
+
+account = BankAccount("지민", 10000)
+account.deposit(5000)`,
+output:"지민님의 잔액: 15000",
+shortKey:"지민님의 잔액: 15000",
+oxType:"오류 찾기형 OX",
+ox:"deposit(5000)을 실행하면 기존 잔액 10000에 5000이 더해져 balance는 15000이 된다.",
+oxAns:"O",
+oxExp:"self.balance += money는 기존 잔액에 입금액을 더해 다시 저장하는 코드입니다.",
+mc:"이 코드에서 인스턴스의 잔액을 저장하는 속성은?",
+choices:["① owner","② money","③ balance","④ deposit","⑤ BankAccount"],
+mcAns:"3",
+mcExp:"self.balance가 잔액을 저장하는 인스턴스 속성입니다."
+},
+{
+title:"🍔 음식 주문",
+concept:"음식 이름과 개수를 속성으로 저장하고, order() 메서드로 주문 결과를 출력합니다.",
+code:`class FoodOrder:
+    def __init__(self, menu, count):
+        self.menu = menu
+        self.count = count
+
+    def order(self):
+        print(self.menu + " " + str(self.count) + "개 주문 완료")
+
+order1 = FoodOrder("햄버거", 3)
+order1.order()`,
+output:"햄버거 3개 주문 완료",
+shortKey:"햄버거 3개 주문 완료",
+oxType:"비교형 OX",
+ox:"self.count는 주문 개수를 저장하는 속성이며, 출력할 때 str()로 문자열로 바꾸어 연결한다.",
+oxAns:"O",
+oxExp:"문자열과 숫자를 +로 직접 연결할 수 없으므로 str(self.count)를 사용합니다.",
+mc:"이 코드에서 str(self.count)를 사용하는 이유로 가장 적절한 것은?",
+choices:["① count를 삭제하기 위해","② 숫자를 문자열과 연결하기 위해","③ menu를 숫자로 바꾸기 위해","④ order1을 클래스로 만들기 위해","⑤ print를 멈추기 위해"],
+mcAns:"2",
+mcExp:"'햄버거 ' 같은 문자열과 3 같은 정수를 +로 연결하려면 정수를 문자열로 변환해야 합니다."
+},
+{
+title:"📱 스마트폰 알림",
+concept:"스마트폰 앱 이름을 속성으로 저장하고, notify() 메서드로 알림 메시지를 출력합니다.",
+code:`class PhoneApp:
+    def __init__(self, app):
+        self.app = app
+
+    def notify(self):
+        print(self.app + " 알림이 도착했습니다.")
+
+app1 = PhoneApp("카카오톡")
+app1.notify()`,
+output:"카카오톡 알림이 도착했습니다.",
+shortKey:"카카오톡 알림이 도착했습니다",
+oxType:"상황 적용형 OX",
+ox:"PhoneApp 클래스로 여러 앱 인스턴스를 만들면 각 인스턴스는 서로 다른 app 값을 가질 수 있다.",
+oxAns:"O",
+oxExp:"같은 클래스로 만든 인스턴스라도 self.app에 저장되는 값은 인스턴스마다 다를 수 있습니다.",
+mc:"다음 중 app1.notify()의 의미로 가장 적절한 것은?",
+choices:["① app1 인스턴스의 notify 기능을 실행한다","② PhoneApp 클래스를 삭제한다","③ app 값을 입력받는다","④ print 함수를 정의한다","⑤ __init__ 이름을 바꾼다"],
+mcAns:"1",
+mcExp:"app1.notify()는 app1이라는 인스턴스가 가진 notify 메서드를 실행하는 코드입니다."
+}
+];
+
+const exDiv=document.getElementById("examples");
+
+examples.forEach((e,i)=>{
+exDiv.insertAdjacentHTML("beforeend",`
+<div class="qbox">
+<h3>예제 ${i+1}. ${e.title}</h3>
+<p class="explain">${e.concept}</p>
+
+<h4>📌 코드</h4>
+<pre>${escapeHtml(e.code)}</pre>
+
+<h4>✅ 예상 출력</h4>
+<div class="output">${e.output}</div>
+
+<h4>📝 코드 상세 설명</h4>
+<div class="explain">
+<b>class</b>는 설계도를 만들고, <b>__init__</b>은 인스턴스가 생성될 때 속성을 초기화합니다.
+<b>self</b>는 현재 만들어진 인스턴스 자신을 가리킵니다.
+마지막 줄의 메서드 호출을 통해 실제 출력이 발생합니다.
+</div>
+
+<h4>1) 출력 서술형 문제</h4>
+<p>위 코드를 실행했을 때 출력 결과를 쓰시오.</p>
+<textarea id="short${i}" placeholder="출력 결과를 직접 입력하세요."></textarea>
+<p class="answer">정답 예시: ${e.output}</p>
+<p class="explain">상세 풀이: 메서드 안의 print문이 실행되며, 인스턴스에 저장된 속성값이 문장에 결합되어 출력됩니다.</p>
+
+<h4>2) ${e.oxType}</h4>
+<p>${e.ox}</p>
+<label><input type="radio" name="ox${i}" value="O"> O</label>
+<label><input type="radio" name="ox${i}" value="X"> X</label>
+<p class="answer">정답: ${e.oxAns}</p>
+<p class="explain">${e.oxExp}</p>
+
+<h4>3) 5지선다형</h4>
+<p>${e.mc}</p>
+${e.choices.map((c,j)=>`<label><input type="radio" name="mc${i}" value="${j+1}"> ${c}</label>`).join("")}
+<p class="answer">정답: ${e.mcAns}번</p>
+<p class="explain">${e.mcExp}</p>
+</div>
+`);
+});
+
+function escapeHtml(s){
+return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+}
+
+function norm(s){
+return s.replaceAll(" ","").replaceAll("\\n","").replaceAll(".","").trim();
+}
+
+function grade(){
+let score=0;
+let total=15;
+let detail=[];
+let fullExplain=[];
+
+examples.forEach((e,i)=>{
+let short=document.getElementById("short"+i).value.trim();
+let shortOk=norm(short).includes(norm(e.shortKey));
+if(shortOk) score++;
+detail.push(`예제 ${i+1} 출력 서술형 | 내 답: ${short||"미응답"} | 정답 예시: ${e.output} | ${shortOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 출력 서술형 풀이: ${e.output}가 출력된다. 이유: 인스턴스 생성 후 메서드가 호출되며 print문이 실행된다.`);
+
+let ox=document.querySelector(`input[name="ox${i}"]:checked`);
+let oxVal=ox?ox.value:"미응답";
+let oxOk=oxVal===e.oxAns;
+if(oxOk) score++;
+detail.push(`예제 ${i+1} OX | 내 답: ${oxVal} | 정답: ${e.oxAns} | ${oxOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} OX 풀이: ${e.oxExp}`);
+
+let mc=document.querySelector(`input[name="mc${i}"]:checked`);
+let mcVal=mc?mc.value:"미응답";
+let mcOk=mcVal===e.mcAns;
+if(mcOk) score++;
+detail.push(`예제 ${i+1} 5지선다 | 내 답: ${mcVal} | 정답: ${e.mcAns}번 | ${mcOk?"정답":"오답"}`);
+fullExplain.push(`예제 ${i+1} 5지선다 풀이: ${e.mcExp}`);
+});
+
+let percent=Math.round(score/total*100);
+document.getElementById("result").innerHTML=`점수: ${percent}점 / ${score}개 정답 / 총 ${total}문항`;
+
+let sid=document.getElementById("sid").value.trim()||"학번";
+let sname=document.getElementById("sname").value.trim()||"이름";
+let now=new Date();
+let displayTime=now.toLocaleString("ko-KR");
+let fileTime=now.toISOString().replaceAll(":","-").slice(0,19);
+
+let txt=`OOP 기초 클래스와 인스턴스 평가 결과
+
+학번: ${sid}
+이름: ${sname}
+점수: ${percent}점
+정답 수: ${score}/${total}
+응시시각: ${displayTime}
+
+[문항별 결과]
+${detail.join("\\n")}
+
+[상세풀이]
+${fullExplain.join("\\n")}
+
+[학습 요약]
+클래스는 객체를 만들기 위한 설계도이고, 인스턴스는 클래스로부터 실제 생성된 객체이다.
+__init__은 객체 생성 시 속성을 초기화하며, self는 현재 인스턴스 자신을 의미한다.
+`;
+
+let blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download=`${sid}_${sname}_OOP클래스_${percent}점_${fileTime}.txt`;
+a.click();
+}
+</script>
+
+</body>
+</html>
