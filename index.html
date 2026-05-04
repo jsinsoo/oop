@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>OOP 학습 통합 INDEX</title>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Malgun Gothic',sans-serif;
+}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    background:#f1f5f9;
+}
+
+/* 전체 레이아웃 */
+.container{
+    display:flex;
+    width:100%;
+    height:100vh;
+}
+
+/* 왼쪽 3 */
+.sidebar{
+    width:30%;
+    background:linear-gradient(180deg,#1e3a8a,#1e40af);
+    color:white;
+    overflow-y:auto;
+    padding:20px;
+}
+
+/* 오른쪽 7 */
+.content{
+    width:70%;
+    background:white;
+}
+
+/* iframe */
+iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+/* 제목 */
+.sidebar h1{
+    font-size:26px;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+/* 링크 */
+.menu{
+    list-style:none;
+}
+
+.menu li{
+    margin-bottom:12px;
+}
+
+.menu a{
+    display:block;
+    text-decoration:none;
+    color:white;
+    background:rgba(255,255,255,0.1);
+    padding:14px;
+    border-radius:12px;
+    transition:0.3s;
+    font-weight:bold;
+}
+
+.menu a:hover{
+    background:#60a5fa;
+    transform:translateX(5px);
+}
+
+/* 스크롤 */
+.sidebar::-webkit-scrollbar{
+    width:8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:#93c5fd;
+    border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- 왼쪽 3 -->
+    <div class="sidebar">
+        <h1>📚 OOP 학습 INDEX</h1>
+
+        <ul class="menu">
+            <li><a href="oop001.html" target="viewer">① 클래스와 인스턴스</a></li>
+            <li><a href="oop002.html" target="viewer">② 캡슐화</a></li>
+            <li><a href="oop003.html" target="viewer">③ 상속</a></li>
+            <li><a href="oop004.html" target="viewer">④ 다형성</a></li>
+            <li><a href="oop005.html" target="viewer">⑤ 생성자/소멸자</a></li>
+            <li><a href="oop006.html" target="viewer">⑥ Property 데코레이터</a></li>
+            <li><a href="oop007.html" target="viewer">⑦ 정적/클래스 메서드</a></li>
+            <li><a href="oop008.html" target="viewer">⑧ 추상 클래스</a></li>
+            <li><a href="oop009.html" target="viewer">⑨ 컴포지션</a></li>
+            <li><a href="oop010.html" target="viewer">⑩ MRO</a></li>
+            <li><a href="oop011.html" target="viewer">⑪ 매직 메서드</a></li>
+            <li><a href="oop012.html" target="viewer">⑫ 싱글톤 패턴</a></li>
+            <li><a href="oop013.html" target="viewer">⑬ 디스크립터</a></li>
+            <li><a href="oop014.html" target="viewer">⑭ 메타클래스</a></li>
+            <li><a href="oop015.html" target="viewer">⑮ __slots__ 최적화</a></li>
+        </ul>
+    </div>
+
+    <!-- 오른쪽 7 -->
+    <div class="content">
+        <iframe name="viewer" src="oop001.html"></iframe>
+    </div>
+
+</div>
+
+</body>
+</html>
