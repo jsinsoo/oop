@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>지능 에이전트 OOP 코드 10개 평가</title>
+<style>
+    body {
+        margin: 0;
+        font-family: 'Malgun Gothic', Arial, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+    }
+    header {
+        background: linear-gradient(135deg, #1d4ed8, #0f172a);
+        color: white;
+        padding: 28px;
+        text-align: center;
+    }
+    .wrap {
+        max-width: 1180px;
+        margin: 24px auto;
+        padding: 0 18px 40px;
+    }
+    .info, .card, .quiz {
+        background: white;
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.08);
+    }
+    h2 { color: #1d4ed8; }
+    h3 { margin-top: 0; color: #0f172a; }
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 12px;
+        overflow-x: auto;
+        line-height: 1.55;
+        font-size: 15px;
+    }
+    .concept {
+        background: #eff6ff;
+        border-left: 6px solid #2563eb;
+        padding: 12px;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+    input[type=text] {
+        width: 95%;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+    .student input {
+        width: 220px;
+        margin: 6px;
+    }
+    button {
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 18px;
+        background: #2563eb;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 6px 4px;
+    }
+    button:hover { background: #1e40af; }
+    .result {
+        display: none;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 10px;
+        white-space: pre-wrap;
+    }
+    .ok { color: #15803d; font-weight: bold; }
+    .no { color: #b91c1c; font-weight: bold; }
+    .small { color:#64748b; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+    <h1>지능 에이전트 OOP 코드 10개</h1>
+    <p>클래스의 속성은 상태, 메서드는 행동을 표현합니다.</p>
+</header>
+
+<div class="wrap">
+    <section class="info">
+        <h2>학습 목표</h2>
+        <p>지능 에이전트를 하나의 객체로 표현하고, <b>상태(state)</b>와 <b>행동(action)</b>을 OOP 코드로 구현할 수 있다.</p>
+        <div class="student">
+            <b>응시자 정보</b><br>
+            학번 <input id="sid" type="text" placeholder="예: 1101">
+            이름 <input id="sname" type="text" placeholder="예: 홍길동">
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>1. 청소 로봇 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 위치, 배터리, 먼지 여부 / 행동: 감지하기, 청소하기, 이동하기</div>
+        <pre><code>class CleaningAgent:
+    def __init__(self):
+        self.location = &quot;거실&quot;
+        self.battery = 100
+        self.dust = True
+
+    def sense(self):
+        return self.dust
+
+    def clean(self):
+        if self.sense():
+            self.dust = False
+            self.battery -= 10
+            return &quot;청소 완료&quot;
+        return &quot;먼지 없음&quot;
+
+    def move(self, place):
+        self.location = place
+        self.battery -= 5
+
+agent = CleaningAgent()
+print(agent.clean())
+agent.move(&quot;주방&quot;)
+print(agent.location, agent.battery)</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 1</h3>
+        <p>CleaningAgent 클래스에서 battery는 무엇을 표현하는가?</p>
+        <input id="ans1" type="text" placeholder="정답 입력">
+        <div id="res1" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>2. 온도 조절 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 현재 온도, 목표 온도 / 행동: 온도 비교, 냉방 또는 난방 결정</div>
+        <pre><code>class TemperatureAgent:
+    def __init__(self, current, target):
+        self.current = current
+        self.target = target
+
+    def decide(self):
+        if self.current &gt; self.target:
+            return &quot;냉방 실행&quot;
+        elif self.current &lt; self.target:
+            return &quot;난방 실행&quot;
+        return &quot;유지&quot;
+
+agent = TemperatureAgent(30, 24)
+print(agent.decide())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 2</h3>
+        <p>현재 온도가 목표 온도보다 높으면 출력되는 행동은?</p>
+        <input id="ans2" type="text" placeholder="정답 입력">
+        <div id="res2" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>3. 학습 추천 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 학생 점수 / 행동: 수준에 맞는 학습 자료 추천</div>
+        <pre><code>class StudyAgent:
+    def __init__(self, score):
+        self.score = score
+
+    def recommend(self):
+        if self.score &gt;= 80:
+            return &quot;심화 문제 추천&quot;
+        elif self.score &gt;= 50:
+            return &quot;기본 문제 추천&quot;
+        return &quot;개념 복습 추천&quot;
+
+agent = StudyAgent(65)
+print(agent.recommend())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 3</h3>
+        <p>score가 65일 때 추천 결과는?</p>
+        <input id="ans3" type="text" placeholder="정답 입력">
+        <div id="res3" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>4. 길 찾기 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 현재 위치, 목적지 / 행동: 목적지까지 이동</div>
+        <pre><code>class NavigationAgent:
+    def __init__(self, start, goal):
+        self.position = start
+        self.goal = goal
+
+    def move(self):
+        self.position = self.goal
+        return f&quot;{self.goal} 도착&quot;
+
+agent = NavigationAgent(&quot;학교&quot;, &quot;도서관&quot;)
+print(agent.move())
+print(agent.position)</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 4</h3>
+        <p>move() 실행 후 position의 값은?</p>
+        <input id="ans4" type="text" placeholder="정답 입력">
+        <div id="res4" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>5. 게임 적 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 체력, 공격력 / 행동: 공격하기, 피해 받기</div>
+        <pre><code>class EnemyAgent:
+    def __init__(self):
+        self.hp = 50
+        self.power = 10
+
+    def attack(self):
+        return self.power
+
+    def damaged(self, amount):
+        self.hp -= amount
+
+enemy = EnemyAgent()
+print(enemy.attack())
+enemy.damaged(15)
+print(enemy.hp)</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 5</h3>
+        <p>damaged(15) 실행 후 hp는?</p>
+        <input id="ans5" type="text" placeholder="정답 입력">
+        <div id="res5" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>6. 스마트 조명 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 밝기, 사람 감지 여부 / 행동: 조명 켜기 또는 끄기</div>
+        <pre><code>class LightAgent:
+    def __init__(self, brightness, human):
+        self.brightness = brightness
+        self.human = human
+
+    def control(self):
+        if self.human and self.brightness &lt; 40:
+            return &quot;조명 켜기&quot;
+        return &quot;조명 끄기&quot;
+
+agent = LightAgent(20, True)
+print(agent.control())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 6</h3>
+        <p>brightness가 20이고 human이 True일 때 결과는?</p>
+        <input id="ans6" type="text" placeholder="정답 입력">
+        <div id="res6" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>7. 쓰레기 분류 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 입력된 물체 / 행동: 재활용 종류 판단</div>
+        <pre><code>class RecyclingAgent:
+    def __init__(self, item):
+        self.item = item
+
+    def classify(self):
+        if self.item in [&quot;종이&quot;, &quot;신문&quot;]:
+            return &quot;종이류&quot;
+        elif self.item in [&quot;병&quot;, &quot;유리&quot;]:
+            return &quot;유리류&quot;
+        return &quot;일반 쓰레기&quot;
+
+agent = RecyclingAgent(&quot;신문&quot;)
+print(agent.classify())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 7</h3>
+        <p>item이 &#x27;신문&#x27;일 때 분류 결과는?</p>
+        <input id="ans7" type="text" placeholder="정답 입력">
+        <div id="res7" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>8. 알림 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 일정 목록 / 행동: 일정 추가, 일정 알림</div>
+        <pre><code>class ReminderAgent:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self, task):
+        self.tasks.append(task)
+
+    def remind(self):
+        return self.tasks
+
+agent = ReminderAgent()
+agent.add_task(&quot;정보 수행평가&quot;)
+agent.add_task(&quot;보고서 제출&quot;)
+print(agent.remind())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 8</h3>
+        <p>tasks는 어떤 자료형으로 시작하는가?</p>
+        <input id="ans8" type="text" placeholder="정답 입력">
+        <div id="res8" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>9. 감정 반응 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 입력 감정 / 행동: 감정에 맞는 반응 출력</div>
+        <pre><code>class EmotionAgent:
+    def __init__(self, emotion):
+        self.emotion = emotion
+
+    def respond(self):
+        if self.emotion == &quot;기쁨&quot;:
+            return &quot;함께 축하해요!&quot;
+        elif self.emotion == &quot;슬픔&quot;:
+            return &quot;괜찮아요, 응원할게요.&quot;
+        return &quot;감정을 이해했어요.&quot;
+
+agent = EmotionAgent(&quot;슬픔&quot;)
+print(agent.respond())</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 9</h3>
+        <p>emotion이 &#x27;슬픔&#x27;일 때 출력은?</p>
+        <input id="ans9" type="text" placeholder="정답 입력">
+        <div id="res9" class="result"></div>
+    </section>
+
+    <section class="card">
+        <h2>10. PEAS 기반 택배 로봇 에이전트</h2>
+        <div class="concept"><b>핵심 설명</b><br>상태: 성능점수, 환경, 액추에이터, 센서 / 행동: 배달 수행</div>
+        <pre><code>class DeliveryAgent:
+    def __init__(self):
+        self.performance = 0
+        self.environment = &quot;복도&quot;
+        self.actuator = &quot;바퀴&quot;
+        self.sensor = &quot;카메라&quot;
+
+    def deliver(self, success):
+        if success:
+            self.performance += 10
+            return &quot;배달 성공&quot;
+        self.performance -= 5
+        return &quot;배달 실패&quot;
+
+agent = DeliveryAgent()
+print(agent.deliver(True))
+print(agent.performance)</code></pre>
+        <p><b>상세 설명</b></p>
+        <p>이 예시는 지능 에이전트를 클래스로 표현한 것입니다. <b>self.변수</b>는 에이전트가 현재 가지고 있는 상태이고, 
+        클래스 안의 함수인 <b>메서드</b>는 감지, 판단, 이동, 추천, 제어 같은 행동을 수행합니다.</p>
+    </section>
+    <section class="quiz">
+        <h3>문항 10</h3>
+        <p>deliver(True) 실행 후 performance는?</p>
+        <input id="ans10" type="text" placeholder="정답 입력">
+        <div id="res10" class="result"></div>
+    </section>
+
+    <section class="info">
+        <h2>제출 및 TXT 저장</h2>
+        <button onclick="grade()">채점하기</button>
+        <button onclick="saveTxt()">TXT 저장하기</button>
+        <div id="total" class="result"></div>
+        <p class="small">저장 파일명: 학번_이름_점수_지능에이전트OOP_응시시각.txt</p>
+    </section>
+</div>
+
+<script>
+const quiz = [{"q": "CleaningAgent 클래스에서 battery는 무엇을 표현하는가?", "a": "상태", "e": "battery는 청소 로봇의 현재 배터리 값을 저장하는 속성입니다. 속성은 객체의 상태를 표현합니다."}, {"q": "현재 온도가 목표 온도보다 높으면 출력되는 행동은?", "a": "냉방 실행", "e": "current가 target보다 크므로 decide() 메서드는 '냉방 실행'을 반환합니다."}, {"q": "score가 65일 때 추천 결과는?", "a": "기본 문제 추천", "e": "65는 50 이상 80 미만이므로 '기본 문제 추천' 조건에 해당합니다."}, {"q": "move() 실행 후 position의 값은?", "a": "도서관", "e": "move() 메서드는 position을 goal 값으로 바꾸므로 position은 '도서관'이 됩니다."}, {"q": "damaged(15) 실행 후 hp는?", "a": "35", "e": "초기 hp는 50이고 15만큼 감소하므로 35가 됩니다."}, {"q": "brightness가 20이고 human이 True일 때 결과는?", "a": "조명 켜기", "e": "사람이 있고 밝기가 40보다 낮으므로 조명을 켜는 행동을 선택합니다."}, {"q": "item이 '신문'일 때 분류 결과는?", "a": "종이류", "e": "'신문'은 ['종이', '신문'] 리스트에 포함되므로 '종이류'로 분류됩니다."}, {"q": "tasks는 어떤 자료형으로 시작하는가?", "a": "리스트", "e": "__init__에서 self.tasks = []로 정의했으므로 빈 리스트로 시작합니다."}, {"q": "emotion이 '슬픔'일 때 출력은?", "a": "괜찮아요, 응원할게요.", "e": "emotion 값이 '슬픔'과 같으므로 두 번째 조건의 문장이 반환됩니다."}, {"q": "deliver(True) 실행 후 performance는?", "a": "10", "e": "success가 True이면 performance에 10을 더하므로 결과는 10입니다."}];
+
+function norm(x) {
+    return String(x).trim().replace(/\s+/g, "");
+}
+
+let lastText = "";
+let lastScore = 0;
+let lastTime = "";
+
+function grade() {
+    let score = 0;
+    let lines = [];
+    const sid = document.getElementById("sid").value.trim() || "학번미입력";
+    const name = document.getElementById("sname").value.trim() || "이름미입력";
+    const now = new Date();
+    lastTime = now.getFullYear() + "-" +
+        String(now.getMonth()+1).padStart(2,"0") + "-" +
+        String(now.getDate()).padStart(2,"0") + "_" +
+        String(now.getHours()).padStart(2,"0") + "-" +
+        String(now.getMinutes()).padStart(2,"0") + "-" +
+        String(now.getSeconds()).padStart(2,"0");
+
+    lines.push("학번: " + sid);
+    lines.push("이름: " + name);
+    lines.push("평가명: 지능에이전트OOP");
+    lines.push("응시시각: " + lastTime);
+    lines.push("");
+
+    quiz.forEach((item, idx) => {
+        const n = idx + 1;
+        const user = document.getElementById("ans" + n).value.trim();
+        const correct = norm(user) === norm(item.a);
+        if (correct) score += 10;
+
+        const box = document.getElementById("res" + n);
+        box.style.display = "block";
+        box.innerHTML =
+            (correct ? "<span class='ok'>정답</span>" : "<span class='no'>오답</span>") +
+            "\n내 답: " + (user || "미입력") +
+            "\n정답: " + item.a +
+            "\n상세 해설: " + item.e;
+
+        lines.push("[문항 " + n + "]");
+        lines.push("문제: " + item.q);
+        lines.push("내 답: " + (user || "미입력"));
+        lines.push("정답: " + item.a);
+        lines.push("채점: " + (correct ? "정답" : "오답"));
+        lines.push("상세 해설: " + item.e);
+        lines.push("");
+    });
+
+    lastScore = score;
+    lines.splice(3, 0, "점수: " + score + "점 / 100점");
+
+    const total = document.getElementById("total");
+    total.style.display = "block";
+    total.textContent = "총점: " + score + "점 / 100점\n문항별 정오답과 상세 해설이 아래에 표시되었습니다.";
+
+    lastText = lines.join("\n");
+}
+
+function saveTxt() {
+    if (!lastText) grade();
+
+    const sid = document.getElementById("sid").value.trim() || "학번미입력";
+    const name = document.getElementById("sname").value.trim() || "이름미입력";
+    const filename = sid + "_" + name + "_" + lastScore + "점_지능에이전트OOP_" + lastTime + ".txt";
+
+    const blob = new Blob([lastText], {type: "text/plain;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+</script>
+</body>
+</html>
